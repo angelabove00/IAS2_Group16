@@ -1,0 +1,35 @@
+EmployeeNo,Username,Last Name,First Name,Password,AccessLevel
+10001,MGarcia,Garcia,Manuel III,MMDC1234!,Admin
+10002,Alim,Lim,Antonio,1234,Admin
+10003,Baquino,Aquino,Bianca Sofia,1234,Admin
+10004,Ireyes,Reyes,Isabella,1234,Admin
+10005,Ehernandez,Hernandez,Eduard,MMDC1234!,IT
+10006,Avillanueva,Villanueva,Andrea Mae,1234,HR
+10007,BSanJose,San Jose,Brad,1234,HR
+10008,Aromualdez,Romualdez,Alice,1234,HR
+10009,Ratienza,Atienza,Rosie ,1234,HR
+10010,Ralvaro,Alvaro,Roderick,1234,Finance
+10011,Asalcedo,Salcedo,Anthony,1234,Finance
+10012,Jlopez,Lopez,Josie ,MMDC1234!,Finance
+10013,Mfarala,Farala,Martha,1234,Finance
+10014,Lmartinez,Martinez,Leila,1234,Finance
+10015,Fromualdez,Romualdez,Fredrick ,@Mmdc2025!,HR
+10016,Cmata,Mata,Christian,1234,HR
+10017,SDeLeon,De Leon,Selena ,1234,HR
+10018,ASanJose,San Jose,Allison ,1234,Employee
+10019,Crosario,Rosario,Cydney ,1234,Employee
+10020,Mbautista,Bautista,Mark ,1234,Employee
+10022,KDelosSantos,Delos Santos,Kolby ,1234,Employee
+10023,Vsantos,Santos,Vella ,1234,Employee
+10024,TDelRosario,Del Rosario,Tomas,1234,Employee
+10025,Jtolentino,Tolentino,Jacklyn ,1234,Employee
+10026,Pgutierrez,Gutierrez,Percival ,1234,Employee
+10027,Mmanalaysay,Manalaysay,Garfield ,1234,Employee
+10028,Lvillegas,Villegas,Lizeth ,1234,Employee
+10029,CRamos,Ramos,Carol ,1234,Employee
+10030,EMaceda,Maceda,Emelia ,1234,Employee
+10031,Daguilar,Aguilar,Delia ,1234,Employee
+10032,Jcastro,Castro,John Rafael,1234,Employee
+10033,Cmartinez,Martinez,Carlos Ian,1234,Employee
+10034,Bsantos,Santos,Beatriz,MMDC1234!,Employee
+10035,Jrivera,Rivera,Jonathan,1234,Employee

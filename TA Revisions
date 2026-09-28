@@ -1,0 +1,5 @@
+"Add employee" info features added: No negative numbers, No zero, No repeating numbers.
+"Phone number" must start with "09".
+The error message will appear once all basic info are filled out.
+
+Time / attendace table now uneditable.
