@@ -1,34 +1,34 @@
 EmployeeNo,Username,Last Name,First Name,Password,AccessLevel
-10001,MGarcia,Garcia,Manuel III,MMDC1234!,Admin
-10002,Alim,Lim,Antonio,1234,Admin
-10003,Baquino,Aquino,Bianca Sofia,1234,Admin
-10004,Ireyes,Reyes,Isabella,1234,Admin
-10005,Ehernandez,Hernandez,Eduard,MMDC1234!,IT
-10006,Avillanueva,Villanueva,Andrea Mae,1234,HR
-10007,BSanJose,San Jose,Brad,1234,HR
-10008,Aromualdez,Romualdez,Alice,1234,HR
-10009,Ratienza,Atienza,Rosie ,1234,HR
-10010,Ralvaro,Alvaro,Roderick,1234,Finance
-10011,Asalcedo,Salcedo,Anthony,1234,Finance
-10012,Jlopez,Lopez,Josie ,MMDC1234!,Finance
-10013,Mfarala,Farala,Martha,1234,Finance
-10014,Lmartinez,Martinez,Leila,1234,Finance
-10015,Fromualdez,Romualdez,Fredrick ,@Mmdc2025!,HR
-10016,Cmata,Mata,Christian,MMDC1234!,HR
-10017,SDeLeon,De Leon,Selena ,1234,HR
-10018,ASanJose,San Jose,Allison ,1234,Employee
-10019,Crosario,Rosario,Cydney ,1234,Employee
-10020,Mbautista,Bautista,Mark ,1234,Employee
-10022,KDelosSantos,Delos Santos,Kolby ,1234,Employee
-10023,Vsantos,Santos,Vella ,1234,Employee
-10024,TDelRosario,Del Rosario,Tomas,1234,Employee
-10025,Jtolentino,Tolentino,Jacklyn ,1234,Employee
-10026,Pgutierrez,Gutierrez,Percival ,1234,Employee
-10027,Mmanalaysay,Manalaysay,Garfield ,1234,Employee
-10028,Lvillegas,Villegas,Lizeth ,1234,Employee
-10029,CRamos,Ramos,Carol ,1234,Employee
-10030,EMaceda,Maceda,Emelia ,1234,Employee
-10031,Daguilar,Aguilar,Delia ,1234,Employee
-10032,Jcastro,Castro,John Rafael,1234,Employee
-10033,Cmartinez,Martinez,Carlos Ian,1234,Employee
-10034,Bsantos,Santos,Beatriz,MMDC1234!,Employee
+10001,MGarcia,Garcia,Manuel III,$2a$12$Y0635i9rp5wcYvUZtk.5W.Cl3YQQyLT4q4FpQ1N0G8uyxd/IBkk9a,Admin
+10002,Alim,Lim,Antonio,$2a$12$rZDv2hQO1IL/8J2VajPIW.9QPsTYM/VHBbQ0FLNqLB4MnaJomU.jO,Admin
+10003,Baquino,Aquino,Bianca Sofia,$2a$12$gzl9FnR8MN0k88hfwM8/QOWrwd40GClxBNrQC2EpQou.eAYDPsSN.,Admin
+10004,Ireyes,Reyes,Isabella,$2a$12$AWTeQg8B1T/Go2V1qDcIf.wC4HzsAd3LcccMsl7Cr2rPmE8BrhiIa,Admin
+10005,Ehernandez,Hernandez,Eduard,$2a$12$Wj99t2.NVsvw1AYXYRqG8eLs.Z7K9ZPjyyDmoNIgf8kgicaMBcWsa,IT
+10006,Avillanueva,Villanueva,Andrea Mae,$2a$12$c6fyUYZNA8bWSXZF/0umk.Z9kieAR4dbKjWQ87rfbGGX8gNsoyUt.,HR
+10007,BSanJose,San Jose,Brad,$2a$12$RaQ/Po33/dlqj5BL4pR84uRYCH.0/iljI6qFeIBjyAxaocUYM9H8q,HR
+10008,Aromualdez,Romualdez,Alice,$2a$12$bJc6L1.4iWFEg6cOVIY.a..H4eTJwhzzzWrSB2ur93rn5nNo7w90i,HR
+10009,Ratienza,Atienza,Rosie ,$2a$12$3433ONUrc4CDYOPoqSQK3OdwGm/FWkGynsJnQu5hrwJosEXCouCLO,HR
+10010,Ralvaro,Alvaro,Roderick,$2a$12$DSIsVvjxa0mPa1faRgj3JeE11zdSutFhSM.m3MiMEOVphwIbn1xOK,Finance
+10011,Asalcedo,Salcedo,Anthony,$2a$12$9STSFLUeCMoJd293gjeMqOMy/4n12AX5zDkLaYkOoVnwCnZJQyNLi,Finance
+10012,Jlopez,Lopez,Josie ,$2a$12$tFz2AFZo2N0cBm0D3K3P4e2ZNk/IWQFBV5DfZVheJZ8UQvNwFw5bu,Finance
+10013,Mfarala,Farala,Martha,$2a$12$MyV/joG0ec9xz89j3WtuReKjC6sqESp3gO/S8v3I0/FM7vnBX82L6,Finance
+10014,Lmartinez,Martinez,Leila,$2a$12$fuhZdJctcDFbgiegxORCnOjl4p68pEOoCY8xap9jhNW2cGGUFqpiG,Finance
+10015,Fromualdez,Romualdez,Fredrick ,$2a$12$qFwLsGTqcyuTO2NBzGHju.rgwLzZjvwI8DnBIBnoWM1ivf/kVne7G,HR
+10016,Cmata,Mata,Christian,$2a$12$uD9WOyMyxGUdWNUptpHV3eO.kZjse5QyDDoh55otWJh1AFnYNvtdG,HR
+10017,SDeLeon,De Leon,Selena ,$2a$12$3UnuoT4wY2hvT5dyJFFfb.7J6W0nqq46WvWTgo6SSLKE0jv4QbjMC,HR
+10018,ASanJose,San Jose,Allison ,$2a$12$Su84AqvK2WFK.AAXSYB7rOY3sV9jH1TNt5H41uqWyPiLN7Y/xyedu,Employee
+10019,Crosario,Rosario,Cydney ,$2a$12$7Hn296CiPCVDFRyWbCZsyeKdriX.fkHiry5gRrrHXBxlnCiCvDgE6,Employee
+10020,Mbautista,Bautista,Mark ,$2a$12$Cd29OWHWtm4gL5jG7SCB0uOm3/RsRZZNBCMX4GLPWDeZrzxf7Rx7u,Employee
+10022,KDelosSantos,Delos Santos,Kolby ,$2a$12$HkXLdBL4qb17gP2PdP/YueW6CRun83qlDs02GBIrANN7SnaOrNp4m,Employee
+10023,Vsantos,Santos,Vella ,$2a$12$9PP1sk4DOKQyEhN3vySvLeJFu00Ka1JD6eVMqBYsGK4SMsvwy4Olq,Employee
+10024,TDelRosario,Del Rosario,Tomas,$2a$12$UZZSoXDsOoHpXlGQmpw0P.Bu/iHiCkXB2UoZRdNHyW8VvzrX7E6Li,Employee
+10025,Jtolentino,Tolentino,Jacklyn ,$2a$12$nOl6Of9IO6rlb3QNm8wVFekQtsUagSVF3VCOmaxQ8yWCIRw3r3v0O,Employee
+10026,Pgutierrez,Gutierrez,Percival ,$2a$12$hGXiJSw/dbb7ai5jw.ciduKZFYgKkAfGWOBpJUHI7EcQGEb/4ohkq,Employee
+10027,Mmanalaysay,Manalaysay,Garfield ,$2a$12$1Lct1E5TYeeT6Me42CDkIeTgE0d6Z/tfOCdX9Oq/VhHfdHwBXfAca,Employee
+10028,Lvillegas,Villegas,Lizeth ,$2a$12$FrBmkldJwAjh4Mj.9B3eNeTDQ4jnhO1mrkNCMI2ncJTsgNTkU9m1W,Employee
+10029,CRamos,Ramos,Carol ,$2a$12$AkiE0pkMqPLSp1VLogP4ouRjdT.sFVDIHtSSLlYppJxGcKJSK4utu,Employee
+10030,EMaceda,Maceda,Emelia ,$2a$12$2rTazNoXGLqDwlo1eZRr/ualb1AEy1lbpk6TKDgUwMs.jHZgPnHsy,Employee
+10031,Daguilar,Aguilar,Delia ,$2a$12$kJVssNuLagiUBflrzsRnFeAK5JguN4DhhutjPUkYCYuoiDRMPnWkC,Employee
+10032,Jcastro,Castro,John Rafael,$2a$12$tOMJCkf5t05vJCdDxCdiV.29DfZF.oRPUti3S8m3q4HFuczClBSSa,Employee
+10033,Cmartinez,Martinez,Carlos Ian,$2a$12$P0nhqKBKSZHpB0iq8cbkYu6GM42PlzHj88CEtIcVd.3EMAtOANfc6,Employee
+10034,Bsantos,Santos,Beatriz,$2a$12$H3qT0mTEoKPKKAfYW0BAxuDkNNUFy2AALisihvcpn4X.IKcmEXn4e,Employee
