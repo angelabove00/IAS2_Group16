@@ -1,20 +1,19 @@
 
 package motorph_oop.ui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import motorph_oop.service.LoginService;
-import motorph_oop.model.Employee;
-import motorph_oop.model.Role;
+import javax.swing.*;
 import motorph_oop.model.AdminAccess;
-import motorph_oop.model.ITAccess;
+import motorph_oop.model.Employee;
 import motorph_oop.model.FinanceAccess;
 import motorph_oop.model.HRAccess;
+import motorph_oop.model.ITAccess;
+import motorph_oop.model.Role;
+import motorph_oop.service.LoginService;
 import motorph_oop.util.Session;
 
 // main login window for motorph system
@@ -196,7 +195,7 @@ public class LoginPanel extends JFrame {
                     "You are using the default password. Please reset it."
             );
 
-            openResetDialog();
+            openResetDialog(username, password);
             return;
         }
 
@@ -288,19 +287,7 @@ public class LoginPanel extends JFrame {
     }
 
     // opens password reset dialog
-    private void openResetDialog() {
-
-        String username =
-                JOptionPane.showInputDialog(this, "Enter your username:");
-
-        if (username == null || username.trim().isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Username cannot be empty."
-            );
-            return;
-        }
+    private void openResetDialog(String username, String currentPassword) {
 
         JPasswordField newPass = new JPasswordField(12);
         JPasswordField confirmPass = new JPasswordField(12);
@@ -399,13 +386,19 @@ public class LoginPanel extends JFrame {
         }
 
         boolean success =
-                loginService.resetPassword(username, newPassword);
+                loginService.changeOwnPassword(username, currentPassword, newPassword);
 
-        JOptionPane.showMessageDialog(
-                this,
-                success
-                        ? "Password successfully reset."
-                        : "Reset failed. User not found."
-        );
+        if (success) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Password changed. Please log in with your new password."
+            );
+            passField.setText("");
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Password change failed. Choose a different password that meets the rules."
+            );
+        }
     }
 }
