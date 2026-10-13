@@ -1,0 +1,18 @@
+Test data directory: <temp dir>
+[PASS] C1-T1 authenticate with correct password
+[PASS] C1-T2 authenticate with wrong password
+[PASS] C1-T3 all data rows are bcrypt hashes
+[PASS] C1-T4 hash twice produces different strings
+[PASS] C1-T5 verify handles plaintext/malformed gracefully
+[PASS] C1-T6 entering hash as password is rejected
+[PASS] C1-T7 createUser and resetPassword store hashes
+[LoginDAO] Refused to store a non-bcrypt password value
+[PASS] C1-T8 LoginDAO refuses plaintext updatePassword
+[PASS] C1-T9 changeOwnPassword for forced first-login
+[PASS] C1-T10 changeOwnPassword rejects wrong current or new=1234
+[PASS] C1-T11 hashing cost is 12
+
+=== TEST SUMMARY ===
+Passed: 11
+Failed: 0
+Total: 11

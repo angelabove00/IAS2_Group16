@@ -90,8 +90,8 @@ public class PasswordHashingTest {
             var result = service.authenticate("MGarcia", "Test@1234");
             boolean pass = result != null && result.getEmpNo().equals("10001");
 
-            // Reset back to original (will be hashed)
-            service.resetPassword("MGarcia", "MMDC1234!");
+            // Reset back to temporary default (will be hashed)
+            service.resetPassword("MGarcia", LoginService.TEMP_PASSWORD);
             return pass;
         });
     }

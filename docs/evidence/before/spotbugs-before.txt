@@ -1,1 +1,87 @@
-NOT RUN - SpotBugs 4.8.6 not installed on this system.
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.LeavePanel$1.getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)  At LeavePanel.java:[line 139]
+L D PZLA: Should motorph_oop.dao.LoginDAO.findUserByUsername(String) return a zero length array rather than null?  At LoginDAO.java:[line 58]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.readLoginFile(): new java.io.FileReader(File)  At LoginDAO.java:[line 22]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.updatePassword(String, String): new java.io.FileWriter(File)  At LoginDAO.java:[line 101]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.updatePassword(String, String): new java.io.FileReader(File)  At LoginDAO.java:[line 70]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.createUser(String, String, String, String, String, String): new java.io.FileWriter(File, boolean)  At LoginDAO.java:[line 131]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.deleteUser(String): new java.io.FileReader(File)  At LoginDAO.java:[line 162]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LoginDAO.deleteUser(String): new java.io.FileWriter(File)  At LoginDAO.java:[line 190]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.dao.AttendanceDAO.readAttendanceFile()  At AttendanceDAO.java:[line 41]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.AttendanceDAO.recordTimeIn(String, String, String): new java.io.FileWriter(String, boolean)  At AttendanceDAO.java:[line 109]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.AttendanceDAO.recordTimeOut(String): new java.io.FileWriter(File)  At AttendanceDAO.java:[line 138]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.AttendanceDAO.recordTimeOut(String): new java.io.FileReader(File)  At AttendanceDAO.java:[line 137]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.LeaveApprovalPanel$2.getTableCellRendererComponent(JTable, Object, boolean, boolean, int, int)  At LeaveApprovalPanel.java:[line 60]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.model.RoleFactory.createRole(String)  At RoleFactory.java:[line 8]
+M B DE: motorph_oop.util.CSVHandler.loadAvailableMonths(String, String, DateTimeFormatter) might ignore java.lang.Exception  At CSVHandler.java:[line 103]
+L D DLS: Dead store to $L3 in motorph_oop.util.CSVHandler.loadEmployeeData(String, DefaultTableModel)  At CSVHandler.java:[line 116]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.util.CSVHandler.loadAvailableMonths(String, String, DateTimeFormatter)  At CSVHandler.java:[line 103]
+H I Dm: Found reliance on default encoding in motorph_oop.util.CSVHandler.appendToCSV(String, String[]): new java.io.FileWriter(String, boolean)  At CSVHandler.java:[line 20]
+H I Dm: Found reliance on default encoding in motorph_oop.util.CSVHandler.updateCSV(String, String, String[]): new java.io.FileReader(File)  At CSVHandler.java:[line 32]
+H I Dm: Found reliance on default encoding in motorph_oop.util.CSVHandler.updateCSV(String, String, String[]): new java.io.FileWriter(File)  At CSVHandler.java:[line 33]
+H I Dm: Found reliance on default encoding in motorph_oop.util.CSVHandler.deleteFromCSV(String, String): new java.io.FileWriter(File)  At CSVHandler.java:[line 68]
+H I Dm: Found reliance on default encoding in motorph_oop.util.CSVHandler.deleteFromCSV(String, String): new java.io.FileReader(File)  At CSVHandler.java:[line 67]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.dao.LeaveDAO.overwriteAll(List)  At LeaveDAO.java:[line 97]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.dao.LeaveDAO.saveLeave(LeaveRequest)  At LeaveDAO.java:[line 74]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.dao.LeaveDAO.loadAllLeaves()  At LeaveDAO.java:[line 52]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LeaveDAO.loadAllLeaves(): new java.io.FileReader(File)  At LeaveDAO.java:[line 28]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LeaveDAO.saveLeave(LeaveRequest): new java.io.FileWriter(String, boolean)  At LeaveDAO.java:[line 62]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.LeaveDAO.overwriteAll(List): new java.io.FileWriter(String)  At LeaveDAO.java:[line 82]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.service.LoginService.authenticate(String, String)  At LoginService.java:[line 27]
+M V EI: motorph_oop.service.LoginService.getResetRequests() may expose internal representation by returning LoginService.resetRequests  At LoginService.java:[line 139]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.utils.PayrollService.calculateTotalHoursWorked(String, String, String)  At PayrollService.java:[line 201]
+H I Dm: Found reliance on default encoding in motorph_oop.utils.PayrollService.calculateTotalHoursWorked(String, String, String): new java.io.FileReader(String)  At PayrollService.java:[line 146]
+H B DE: motorph_oop.dao.EmployeeDAO.getLastEmployeeNumber() might ignore java.lang.Exception  At EmployeeDAO.java:[line 38]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.EmployeeDAO.getLastEmployeeNumber(): new java.io.FileReader(String)  At EmployeeDAO.java:[line 23]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.EmployeeDAO.getAllEmployees(): new java.io.FileReader(String)  At EmployeeDAO.java:[line 62]
+H I Dm: Found reliance on default encoding in motorph_oop.dao.EmployeeDAO.findEmployeeById(String): new java.io.FileReader(String)  At EmployeeDAO.java:[line 87]
+M B FS: Format string should use %n rather than \n in motorph_oop.ui.FullDetailsPanel.calculateSalary()  At FullDetailsPanel.java:[line 389]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.FullDetailsPanel.applyEmployeeRestrictions()  At FullDetailsPanel.java:[line 201]
+L B Se: Class motorph_oop.ui.FullDetailsPanel defines non-transient non-serializable instance field employeeService  In FullDetailsPanel.java
+L B Se: Class motorph_oop.ui.FullDetailsPanel defines non-transient non-serializable instance field employeeDAO  In FullDetailsPanel.java
+L B Se: Class motorph_oop.ui.FullDetailsPanel defines non-transient non-serializable instance field attendanceDAO  In FullDetailsPanel.java
+M D REC: Exception is caught when Exception is not thrown in motorph_oop.ui.FullDetailsPanel.generatePayslipPDF()  At FullDetailsPanel.java:[line 500]
+L V MC: Overridable method getHeight is called from constructor new motorph_oop.ui.FullDetailsPanel().  At FullDetailsPanel.java:[line 78]
+L V MC: Overridable method showSaveDialog is called from constructor new motorph_oop.ui.FullDetailsPanel().  At FullDetailsPanel.java:[line 165]
+L B Se: Class motorph_oop.ui.EmployeeDashboardPanel defines non-transient non-serializable instance field employeeService  In EmployeeDashboardPanel.java
+L B Se: Class motorph_oop.ui.LeavePanel defines non-transient non-serializable instance field leaveService  In LeavePanel.java
+L B Se: Class motorph_oop.ui.TimePanel defines non-transient non-serializable instance field attendanceService  In TimePanel.java
+L V MC: Overridable method getHeight is called from constructor new motorph_oop.ui.TimePanel().  At TimePanel.java:[line 46]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.LoginManagementPanel.createUser()  At LoginManagementPanel.java:[line 67]
+L B Se: Class motorph_oop.ui.LoginManagementPanel defines non-transient non-serializable instance field loginService  In LoginManagementPanel.java
+L B Se: Class motorph_oop.ui.LoginManagementPanel defines non-transient non-serializable instance field employeeDAO  In LoginManagementPanel.java
+L V MC: Overridable method dispose is called from constructor new motorph_oop.ui.EmployeeMainDashboard(String, String, String, String).  At EmployeeMainDashboard.java:[line 49]
+L B PA: Mutable object-type field motorph_oop.ui.EmployeeMainDashboard.fullEmpPanel is public, which makes it too exposed. Consider making it private to limit external accessibility.  At EmployeeMainDashboard.java:[line 20]
+L B PA: Mutable object-type field motorph_oop.ui.EmployeeMainDashboard.timeEmpPanel is public, which makes it too exposed. Consider making it private to limit external accessibility.  At EmployeeMainDashboard.java:[line 22]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.AdminDashboardPanel.getDashboardTitle()  At AdminDashboardPanel.java:[line 279]
+L I Dm: Use of non-localized String.toUpperCase() or String.toLowerCase() in motorph_oop.ui.AdminDashboardPanel.configurePermissions()  At AdminDashboardPanel.java:[line 301]
+L V MC: Overridable method dispose is called from constructor new motorph_oop.ui.AdminDashboardPanel(String, String, String, String, String).  At AdminDashboardPanel.java:[line 57]
+M B CT: Exception thrown in class motorph_oop.ui.AdminDashboardPanel at new motorph_oop.ui.AdminDashboardPanel(String, String, String, String, String) will leave the constructor. The object under construction remains partially initialized and may be vulnerable to Finalizer attacks.  At AdminDashboardPanel.java:[line 62]
+L B PA: Mutable object-type field motorph_oop.ui.AdminDashboardPanel.timeEmpPanel is public, which makes it too exposed. Consider making it private to limit external accessibility.  At AdminDashboardPanel.java:[line 26]
+L B PA: Mutable object-type field motorph_oop.ui.AdminDashboardPanel.fullEmpPanel is public, which makes it too exposed. Consider making it private to limit external accessibility.  At AdminDashboardPanel.java:[line 24]
+L B PA: Mutable object-type field motorph_oop.ui.AdminDashboardPanel.homePanel is public, which makes it too exposed. Consider making it private to limit external accessibility.  At AdminDashboardPanel.java:[line 22]
+L B Dm: motorph_oop.ui.LoginPanel.lambda$new$1(ActionEvent) invokes System.exit(...), which shuts down the entire virtual machine  At LoginPanel.java:[line 117]
+L B Se: Class motorph_oop.ui.LoginPanel defines non-transient non-serializable instance field loginService  In LoginPanel.java
+L V MC: Overridable method dispose is called from constructor new motorph_oop.ui.LoginPanel().  At LoginPanel.java:[line 118]
+L B Se: Class motorph_oop.ui.LeaveApprovalPanel defines non-transient non-serializable instance field leaveService  In LeaveApprovalPanel.java
+L B Se: Class motorph_oop.ui.LeaveApprovalPanel defines non-transient non-serializable instance field currentLeaves  In LeaveApprovalPanel.java
+L B Se: Class motorph_oop.ui.AddEmployeePanel defines non-transient non-serializable instance field employeeService  In AddEmployeePanel.java
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.ui.AddEmployeePanel.calculateHourly()  At AddEmployeePanel.java:[line 349]
+L D REC: Exception is caught when Exception is not thrown in motorph_oop.ui.AddEmployeePanel.calculateGross()  At AddEmployeePanel.java:[line 336]
+M D UuF: Unused public or protected field: motorph_oop.ui.AdminDashboardPanel$Session.empNo  In AdminDashboardPanel.java
+L P SIC: The class motorph_oop.ui.TimePanel$1 could be refactored into a named _static_ inner class  At TimePanel.java:[line 57]
+L P SIC: The class motorph_oop.ui.FullDetailsPanel$1 could be refactored into a named _static_ inner class  At FullDetailsPanel.java:[line 80]
+L D UrF: Unread public/protected field: motorph_oop.util.Session.lastName  At LoginPanel.java:[line 205]
+L D UrF: Unread public/protected field: motorph_oop.util.Session.firstName  At LoginPanel.java:[line 204]
+M D UuF: Unused public or protected field: motorph_oop.ui.AdminDashboardPanel$Session.role  In AdminDashboardPanel.java
+L P SIC: The class motorph_oop.ui.LeavePanel$1 could be refactored into a named _static_ inner class  At LeavePanel.java:[line 127]
+L P SIC: The class motorph_oop.ui.LeaveApprovalPanel$2 could be refactored into a named _static_ inner class  At LeaveApprovalPanel.java:[line 48]
+L D UrF: Unread public/protected field: motorph_oop.util.Session.empNo  At LoginPanel.java:[line 203]
+L P SIC: The class motorph_oop.ui.LeaveApprovalPanel$1 could be refactored into a named _static_ inner class  At LeaveApprovalPanel.java:[line 36]
+L V MS: motorph_oop.ui.AdminDashboardPanel$Session.role isn't final but should be  In AdminDashboardPanel.java
+L V MS: motorph_oop.ui.AdminDashboardPanel$Session.empNo isn't final but should be  In AdminDashboardPanel.java
+H V MS: motorph_oop.util.Constants.EMPLOYEE_COLUMNS is a mutable array  At Constants.java:[line 10]
+H V MS: motorph_oop.util.Constants.ATTENDANCE_COLUMNS is a mutable array  At Constants.java:[line 16]
+M V MS: motorph_oop.util.Session.role isn't final and cannot be protected from malicious code  In Session.java
+L V MS: motorph_oop.util.Session.empNo isn't final and cannot be protected from malicious code  In Session.java
+L V MS: motorph_oop.util.Session.firstName isn't final and cannot be protected from malicious code  In Session.java
+L V MS: motorph_oop.util.Session.lastName isn't final and cannot be protected from malicious code  In Session.java

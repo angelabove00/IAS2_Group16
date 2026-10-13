@@ -23,7 +23,7 @@
 - **jBCrypt SHA-1**: af7e61017f73abb18ac4e036954f9f28c6366c07 (verified)
 - **Cost Factor**: 12
 - **JDK Version**: Java 23 (javac.source=23)
-- **SpotBugs**: NOT RUN – SpotBugs 4.8.6 not installed on this system
+- **SpotBugs**: Version 4.8.6
 - **Semgrep Version**: 1.180.0
 
 ## Files Changed
@@ -426,8 +426,25 @@ Total: 11
 
 ### SpotBugs
 
-**Before**: NOT RUN – SpotBugs 4.8.6 not installed on this system
-**After**: NOT RUN – SpotBugs 4.8.6 not installed on this system
+**Before** (master cf2a213):
+- Total warnings: 87
+- LoginDAO DM_DEFAULT_ENCODING: 6 (lines 22, 70, 101, 131, 162, 190)
+- LoginService EI_EXPOSE_REP: 1 (getResetRequests returns internal list)
+
+**After** (M2_Control1_PasswordHashing):
+- Total warnings: 85
+- LoginDAO DM_DEFAULT_ENCODING: 0 (fixed by using Files.newBufferedReader/Writer with UTF-8)
+- LoginService EI_EXPOSE_REP: 0 (fixed by returning copy of resetRequests)
+- New minor items: 5 (unused variables in LoginDAO, unchecked mkdirs in PasswordMigrationTool)
+
+### Migration Check
+
+**migration-check.txt**:
+```
+rows=33 old-password-verifies=33 mismatches=0 header-same=true
+```
+
+All 33 old master passwords verify against their new bcrypt hashes; no mismatches; header unchanged.
 
 ### Semgrep
 
