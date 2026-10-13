@@ -462,7 +462,7 @@ Total: 11
 
 ## Residual Risks (Deferred)
 
-- **R-003**: The shared temporary password `1234` (stored as `LoginService.TEMP_PASSWORD`) remains. This is deferred to the Secure Password Reset control in Milestone 3.
+- **R-003**: The shared temporary password `1234` (stored as `LoginService.TEMP_PASSWORD`) remains. This is deferred to the Secure Password Reset control in Terminal Assessment.
 - **Plaintext passwords in Git history**: Plaintext passwords remain in Git history before the `m2-c1-baseline` tag. All accounts should be rotated after this change.
 - **No minimum password length**: `validatePasswordRules` only enforces a 12-character maximum, not a minimum.
 - **In-memory lockout only**: The 3-attempt lockout is stored in-memory and resets on application restart.
