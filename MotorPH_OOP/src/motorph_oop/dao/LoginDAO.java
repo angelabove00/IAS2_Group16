@@ -1,11 +1,15 @@
 
 package motorph_oop.dao;
 
-import motorph_oop.util.Constants;
-
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import motorph_oop.util.Constants;
+import motorph_oop.util.PasswordHasher;
 
 // data access object for login operations
 // manages user credentials stored in login csv
@@ -19,7 +23,7 @@ public class LoginDAO {
 
         if (!file.exists()) return rows;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8)) {
 
             String line;
             boolean header = true;
@@ -61,13 +65,19 @@ public class LoginDAO {
     // update password for a user
     public boolean updatePassword(String username, String newPassword) {
 
+        // Guard against plaintext writes
+        if (!PasswordHasher.isBcryptHash(newPassword)) {
+            System.err.println("[LoginDAO] Refused to store a non-bcrypt password value");
+            return false;
+        }
+
         File file = new File(Constants.LOGIN_CSV);
         List<String> lines = new ArrayList<>();
 
         boolean header = true;
         boolean updated = false;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8)) {
 
             String line;
 
@@ -98,7 +108,7 @@ public class LoginDAO {
 
         if (!updated) return false;
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8)) {
 
             for (String l : lines) {
                 writer.write(l);
@@ -126,10 +136,17 @@ public class LoginDAO {
             String password,
             String role) {
 
+        // Guard against plaintext writes
+        if (!PasswordHasher.isBcryptHash(password)) {
+            System.err.println("[LoginDAO] Refused to store a non-bcrypt password value");
+            return false;
+        }
+
         File file = new File(Constants.LOGIN_CSV);
 
         try (BufferedWriter writer =
-                     new BufferedWriter(new FileWriter(file, true))) {
+                     Files.newBufferedWriter(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8,
+                             StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
 
             writer.write(
                     empNo + "," +
@@ -159,7 +176,7 @@ public class LoginDAO {
         boolean header = true;
         boolean deleted = false;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8)) {
 
             String line;
 
@@ -187,7 +204,7 @@ public class LoginDAO {
             e.printStackTrace();
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(Constants.LOGIN_CSV), StandardCharsets.UTF_8)) {
 
             for (String l : lines) {
                 writer.write(l);
