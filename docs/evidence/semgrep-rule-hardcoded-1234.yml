@@ -1,0 +1,6 @@
+rules:
+  - id: hardcoded-default-password-1234
+    languages: [java]
+    severity: WARNING
+    message: Hardcoded default password "1234"
+    pattern: '"1234"'

@@ -1,0 +1,40 @@
+LoginService.authenticate() - verbatim from master (commit cf2a213)
+
+12:    public Employee authenticate(String username, String password) {
+13:
+14:        String[] user = loginDAO.findUserByUsername(username);
+15:        if (user == null) return null;
+16:
+17:        String storedPassword = user[4];
+18:        if (!storedPassword.equals(password)) return null;
+19:
+20:        String empNo = user[0];
+21:        String lastName = user[2];
+22:        String firstName = user[3];
+23:        String role = user[5];
+24:
+25:        Employee employee;
+26:
+27:        switch (role.toUpperCase()) {
+28:            case "ADMIN":
+29:                employee = new AdminAccess();
+30:                break;
+31:            case "IT":
+32:                employee = new ITAccess();
+33:                break;
+34:            case "HR":
+35:                employee = new HRAccess();
+36:                break;
+37:            case "FINANCE":
+38:                employee = new FinanceAccess();
+39:                break;
+40:            default:
+41:                employee = new EmployeeAccess();
+42:        }
+43:
+44:        employee.setEmpNo(empNo);
+45:        employee.setLastName(lastName);
+46:        employee.setFirstName(firstName);
+47:
+48:        return employee;
+49:    }

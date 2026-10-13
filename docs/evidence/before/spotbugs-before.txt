@@ -1,0 +1,1 @@
+NOT RUN - SpotBugs 4.8.6 not installed on this system.
