@@ -60,7 +60,30 @@ Designed not just as a requirement — but as a developer growth milestone
 
 ## 📈 Current Project Progress
 
-🔧 **Finish**  
+🔧 **Finish**
+
+---
+
+## Milestone 2 – Control 1: Password Hashing
+
+Implemented bcrypt password hashing using jBCrypt 0.4 with cost factor 12 to replace plaintext password storage and comparison.
+
+### Key Changes
+- All passwords in `MotorPH_EmployeeLogin.csv` are now stored as bcrypt hashes
+- Authentication uses `PasswordHasher.verify()` instead of plaintext `.equals()`
+- `LoginDAO` guards against non-bcrypt password writes
+- Forced first-login password change no longer allows users to reset other users' passwords
+- Hardcoded `"1234"` literals replaced with `LoginService.TEMP_PASSWORD` constant
+
+### Test Command
+```bash
+cd MotorPH_OOP
+javac -encoding UTF-8 -d build/classes -cp "lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" $(find src test -name "*.java")
+java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" motorph_oop.PasswordHashingTest
+```
+
+### Evidence
+See [docs/M2_Control1_Evidence.md](docs/M2_Control1_Evidence.md) for detailed evidence, test results, and before/after comparisons.
 
 ---
 
