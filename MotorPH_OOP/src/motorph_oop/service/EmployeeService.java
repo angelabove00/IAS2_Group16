@@ -5,6 +5,8 @@ import motorph_oop.dao.EmployeeDAO;
 import motorph_oop.model.Employee;
 import motorph_oop.model.RegularEmployee;
 import motorph_oop.model.ProbationaryEmployee;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.Permission;
 
 import java.util.List;
 
@@ -12,12 +14,32 @@ public class EmployeeService {
 
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
 
-    // get all employees
+    // get all employees (Admin, HR, Finance, IT)
     public List<Employee> getEmployees() {
+        AccessControl.require(Permission.VIEW_ALL_EMPLOYEES);
         return employeeDAO.getAllEmployees();
     }
 
-    // generate next employee number
+    // get one employee: your own record, or anyone's if you can view all
+    public Employee getEmployee(String empNo) {
+        AccessControl.requireSelfOr(empNo, Permission.VIEW_ALL_EMPLOYEES);
+        return employeeDAO.findEmployeeById(empNo);
+    }
+
+    // update an employee record (Admin, HR)
+    public void updateEmployee(Employee employee) {
+        AccessControl.require(Permission.MODIFY_EMPLOYEE);
+        employeeDAO.updateEmployee(employee);
+    }
+
+    // delete an employee record (Admin, HR)
+    public void deleteEmployee(String empNo) {
+        AccessControl.require(Permission.DELETE_EMPLOYEE);
+        employeeDAO.deleteEmployee(empNo);
+    }
+
+    // generate next employee number (read-only helper, no permission check needed;
+    // adding an employee is still protected inside addEmployee)
     public String generateNextEmployeeNumber() {
         int last = employeeDAO.getLastEmployeeNumber();
         return String.valueOf(last + 1);
@@ -115,7 +137,7 @@ public class EmployeeService {
         }
     }
 
-    // add new employee
+    // add new employee (Admin, HR)
     public void addEmployee(
             String empNo,
             String lastName,
@@ -136,6 +158,8 @@ public class EmployeeService {
             String clothingAllowance,
             String grossRate,
             String hourlyRate) {
+
+        AccessControl.require(Permission.ADD_EMPLOYEE);
 
         validateNames(firstName, lastName);
 

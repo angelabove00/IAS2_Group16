@@ -1,9 +1,11 @@
 
 package motorph_oop.ui;
 
-import motorph_oop.dao.AttendanceDAO;
-import motorph_oop.dao.EmployeeDAO;
 import motorph_oop.model.Employee;
+import motorph_oop.service.AttendanceService;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.AccessDeniedException;
+import motorph_oop.security.Permission;
 import motorph_oop.service.EmployeeService;
 import motorph_oop.util.Constants;
 import motorph_oop.utils.PayrollService;
@@ -30,8 +32,7 @@ public class FullDetailsPanel extends JPanel {
     private String userRole;
 
     private final EmployeeService employeeService = new EmployeeService();
-    private final EmployeeDAO employeeDAO = new EmployeeDAO();
-    private final AttendanceDAO attendanceDAO = new AttendanceDAO();
+    private final AttendanceService attendanceService = new AttendanceService();
 
     private JTable attendanceTable;
     private DefaultTableModel attendanceModel;
@@ -95,7 +96,7 @@ public class FullDetailsPanel extends JPanel {
 
         comboMonth = new JComboBox<>();
         comboMonth.addItem("All");
-        comboMonth.addActionListener(e -> reloadTable());
+        comboMonth.addActionListener(e -> guard(this::reloadTable));
 
         JPanel topPanel = new JPanel(new GridLayout(1, 3, 5, 5));
 
@@ -159,10 +160,10 @@ public class FullDetailsPanel extends JPanel {
                 Color.WHITE
         );
 
-        btnCalculate.addActionListener(e -> calculateSalary());
-        updateBtn.addActionListener(e -> updateEmployee());
-        deleteBtn.addActionListener(e -> deleteSelectedRow());
-        setPasswordBtn.addActionListener(e -> generatePayslipPDF());
+        btnCalculate.addActionListener(e -> guard(this::calculateSalary));
+        updateBtn.addActionListener(e -> guard(this::updateEmployee));
+        deleteBtn.addActionListener(e -> guard(this::deleteSelectedRow));
+        setPasswordBtn.addActionListener(e -> guard(this::generatePayslipPDF));
 
 
         buttons.add(btnCalculate);
@@ -186,90 +187,58 @@ public class FullDetailsPanel extends JPanel {
         applyEmployeeRestrictions();
     }
 
-    // Disable fields if employee
+    // Show or hide buttons and lock fields based on what the role is allowed to do.
+    // (The real protection is in the services; this only keeps the screen tidy.)
     private void applyEmployeeRestrictions() {
 
-    if (userRole == null) return;
+        JTextField[] allFields = {
+                lastName, firstName, status, position, supervisor,
+                birthday, sss, philhealth, tin, pagibig,
+                basicSalary, riceSubsidyField, phoneAllowanceField,
+                clothingAllowanceField, grossRate, hourlyRateField, address, phone
+        };
 
-    JTextField[] allFields = {
-            lastName, firstName, status, position, supervisor,
-            birthday, sss, philhealth, tin, pagibig,
-            basicSalary, riceSubsidyField, phoneAllowanceField,
-            clothingAllowanceField, grossRate, hourlyRateField, address, phone
-    };
+        boolean canModify = AccessControl.can(Permission.MODIFY_EMPLOYEE);
+        boolean ownRecord = Session.empNo != null && Session.empNo.equals(employeeNum);
 
-    String role = userRole.toUpperCase();
+        for (JTextField f : allFields) {
+            f.setEditable(canModify);
+        }
 
-    // Reset everything first (safe default)
-    for (JTextField f : allFields) {
-        f.setEditable(true);
+        updateBtn.setVisible(canModify);
+        deleteBtn.setVisible(AccessControl.can(Permission.DELETE_EMPLOYEE));
+        setPasswordBtn.setVisible(AccessControl.can(Permission.GENERATE_PAYSLIP));
+        btnCalculate.setVisible(AccessControl.can(Permission.CALCULATE_SALARY) || ownRecord);
     }
 
-        btnCalculate.setVisible(true);
-        setPasswordBtn.setVisible(true);
-        updateBtn.setVisible(true);
-        deleteBtn.setVisible(true);
-    
+    // Runs an action and shows a friendly message if the backend denies it.
+    private void guard(Runnable action) {
 
+        try {
+            action.run();
 
-    switch (role) {
+        } catch (AccessDeniedException ex) {
 
-        case "EMPLOYEE":
-
-            for (JTextField f : allFields) {
-                f.setEditable(false);
-            }
-
-            setPasswordBtn.setVisible(false);
-            deleteBtn.setVisible(false);
-            updateBtn.setVisible(false);
-
-            break;
-
-        case "IT":
-
-            for (JTextField f : allFields) {
-                f.setEditable(false);
-            }
-            btnCalculate.setVisible(false);
-            updateBtn.setVisible(false);
-            deleteBtn.setVisible(false);
-
-            break;
-
-        case "HR":
-
-            btnCalculate.setVisible(false);
-            setPasswordBtn.setVisible(false);
-
-            break;
-
-        case "FINANCE":
-
-            for (JTextField f : allFields) {
-                f.setEditable(false);
-            }
-            
-            btnCalculate.setVisible(false);
-            updateBtn.setVisible(false);
-            deleteBtn.setVisible(false);
-            setPasswordBtn.setVisible(true);
-
-            break;
-
-        case "ADMIN":
-        default:
-            // Admin keeps full access
-            break;
+            JOptionPane.showMessageDialog(
+                    this,
+                    "You are not authorized to perform this action.",
+                    "Access Denied",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
     }
-}
+
     public void setEmployeeNo(String employeeNo) {
 
         this.employeeNum = employeeNo;
 
-        loadEmployee();
-        loadAvailableMonths();
-        reloadTable();
+        applyEmployeeRestrictions();
+
+        guard(() -> {
+            loadEmployee();
+            loadAvailableMonths();
+            reloadTable();
+        });
     }
     
     // ensures a valid month is selected
@@ -292,7 +261,7 @@ public class FullDetailsPanel extends JPanel {
 
     private void loadEmployee() {
 
-        Employee employee = employeeDAO.findEmployeeById(employeeNum);
+        Employee employee = employeeService.getEmployee(employeeNum);
 
         if (employee == null) return;
 
@@ -325,7 +294,7 @@ public class FullDetailsPanel extends JPanel {
     comboMonth.removeAllItems();
     comboMonth.addItem("All");
 
-    List<String> months = attendanceDAO.getAvailableMonths(employeeNum);
+    List<String> months = attendanceService.getAvailableMonths(employeeNum);
 
     for (String m : months) {
         comboMonth.addItem(m);
@@ -345,7 +314,7 @@ public class FullDetailsPanel extends JPanel {
         attendanceModel.setRowCount(0);
 
         List<Object[]> rows =
-                attendanceDAO.getAttendanceByEmployeeAndMonth(
+                attendanceService.getAttendanceByEmployeeAndMonth(
                         employeeNum,
                         (String) comboMonth.getSelectedItem(),
                         Double.parseDouble(hourlyRateField.getText())
@@ -375,7 +344,7 @@ public class FullDetailsPanel extends JPanel {
     private void calculateSalary() {
 
         if (!validateMonthSelection()) return;
-        Employee employee = employeeDAO.findEmployeeById(employeeNum);
+        Employee employee = employeeService.getEmployee(employeeNum);
         if (employee == null) return;
 
         PayrollResult result =
@@ -430,11 +399,11 @@ public class FullDetailsPanel extends JPanel {
         if (!validateMonthSelection()) return;
         try {
         
-        Employee employee = employeeDAO.findEmployeeById(employeeNum);
+        Employee employee = employeeService.getEmployee(employeeNum);
         if (employee == null) return;
 
         PayrollResult result =
-                PayrollService.calculatePayroll(
+                PayrollService.generatePayslip(
                         employee,
                         Constants.ATTENDANCE_CSV,
                         (String) comboMonth.getSelectedItem()
@@ -497,6 +466,10 @@ public class FullDetailsPanel extends JPanel {
         JOptionPane.showMessageDialog(this,
         "Payslip PDF generated successfully!");
 
+    } catch (AccessDeniedException ex) {
+
+        throw ex;
+
     } catch (Exception ex) {
 
         ex.printStackTrace();
@@ -509,7 +482,7 @@ public class FullDetailsPanel extends JPanel {
 }
     private void updateEmployee() {
 
-        Employee updated = employeeDAO.findEmployeeById(employeeNum);
+        Employee updated = employeeService.getEmployee(employeeNum);
         if (updated == null) return;
 
         updated.setLastName(lastName.getText());
@@ -532,7 +505,7 @@ public class FullDetailsPanel extends JPanel {
         updated.setGrossRate(Double.parseDouble(grossRate.getText()));
         updated.setHourlyRate(Double.parseDouble(hourlyRateField.getText()));
 
-        employeeDAO.updateEmployee(updated);
+        employeeService.updateEmployee(updated);
 
         JOptionPane.showMessageDialog(this, "Employee updated.");
     }
@@ -548,7 +521,7 @@ public class FullDetailsPanel extends JPanel {
 
         if (confirm == JOptionPane.YES_OPTION) {
 
-            employeeDAO.deleteEmployee(employeeNum);
+            employeeService.deleteEmployee(employeeNum);
 
             JOptionPane.showMessageDialog(this, "Employee deleted.");
             clearFields();

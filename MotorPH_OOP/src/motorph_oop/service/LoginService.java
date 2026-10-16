@@ -3,6 +3,8 @@ package motorph_oop.service;
 
 import motorph_oop.dao.LoginDAO;
 import motorph_oop.model.*;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.Permission;
 import motorph_oop.util.PasswordHasher;
 
 public class LoginService {
@@ -12,7 +14,7 @@ public class LoginService {
     // Residual risk R-003: shared temporary password, to be replaced by the Secure Password Reset control (Milestone 3).
     public static final String TEMP_PASSWORD = "1234";
 
-    // login authentication
+    // login authentication (runs BEFORE login, so it has no permission check)
     public Employee authenticate(String username, String password) {
 
         String[] user = loginDAO.findUserByUsername(username);
@@ -79,15 +81,18 @@ public class LoginService {
         else return "Weak";
     }
 
-    // reset password
+    // reset password (Admin, IT)
     public boolean resetPassword(String username, String newPassword) {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
         String hashed = PasswordHasher.hash(newPassword);
         return loginDAO.updatePassword(username, hashed);
     }
 
-    // create user
+    // create user (Admin, IT)
     public boolean createUser(String empNo, String username, String lastName,
                               String firstName, String role) {
+
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
 
         return loginDAO.createUser(
                 empNo,
@@ -99,13 +104,15 @@ public class LoginService {
         );
     }
 
-    // get all users
+    // get all users (Admin, IT)
     public java.util.List<String[]> getAllUsers() {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
         return loginDAO.getAllUsers();
     }
 
-    // delete user
+    // delete user (Admin, IT)
     public boolean deleteUser(String username) {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
         return loginDAO.deleteUser(username);
     }
 
@@ -128,7 +135,7 @@ public class LoginService {
         return PasswordHasher.verify(TEMP_PASSWORD, user[4]);
     }
 
-    // change own password (for forced first-login flow)
+    // change own password (for forced first-login flow, runs BEFORE login)
     public boolean changeOwnPassword(String username, String currentPassword, String newPassword) {
         String[] user = loginDAO.findUserByUsername(username);
         if (user == null) return false;
@@ -157,24 +164,26 @@ public class LoginService {
     private static java.util.List<String> resetRequests =
             new java.util.ArrayList<>();
 
-    // add reset request
+    // add reset request (runs BEFORE login: "Forgot Password?" and lockout)
     public void addResetRequest(String username) {
         if (!resetRequests.contains(username)) {
             resetRequests.add(username);
         }
     }
 
-    // get all reset requests
+    // get all reset requests (Admin, IT)
     public java.util.List<String> getResetRequests() {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
         return new java.util.ArrayList<>(resetRequests);
     }
 
-    // remove request after reset
+    // remove request after reset (Admin, IT)
     public void removeResetRequest(String username) {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
         resetRequests.remove(username);
     }
 
-    // get user by username
+    // get user by username (used by "Forgot Password?" before login)
     public String[] getUserByUsername(String username) {
         return loginDAO.findUserByUsername(username);
     }

@@ -3,6 +3,8 @@ package motorph_oop.ui;
 
 import java.awt.*;
 import javax.swing.*;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.Permission;
 
 public class AdminDashboardPanel extends JFrame {
 
@@ -257,6 +259,7 @@ public class AdminDashboardPanel extends JFrame {
 
         btnLogout.addActionListener(e -> {
 
+            motorph_oop.util.Session.clear();   // clear the session on logout
             new LoginPanel();
             dispose();
         });
@@ -295,86 +298,22 @@ public class AdminDashboardPanel extends JFrame {
         }
     }
     
-    // configure role permissions
+    // configure what this role can see (based on the permission matrix)
     private void configurePermissions() {
 
-        switch (userRole.toUpperCase()) {
+        boolean canViewAll = AccessControl.can(Permission.VIEW_ALL_EMPLOYEES);
+        boolean canManageUsers = AccessControl.can(Permission.MANAGE_USER_ACCOUNTS);
 
-            case "ADMIN":
-                configureAdmin();
-                break;
+        btnDatabase.setVisible(canViewAll);
+        btnFullDetails.setVisible(canViewAll);
+        btnAdd.setVisible(AccessControl.can(Permission.ADD_EMPLOYEE));
+        btnLeaveRequests.setVisible(AccessControl.can(Permission.APPROVE_LEAVE));
+        btnManageLogin.setVisible(canManageUsers);
+        btnTime.setVisible(false);
 
-            case "IT":
-                configureIT();
-                break;
-
-            case "HR":
-                configureHR();
-                break;
-
-            case "FINANCE":
-                configureFinance();
-                break;
-
-            default:
-                showUnauthorized();
-                hideAll();
+        // a role with no permissions at all is not allowed in this dashboard
+        if (!canViewAll && !canManageUsers) {
+            showUnauthorized();
         }
-    }
-
-    private void configureAdmin() {
-
-        btnManageLogin.setEnabled(true);
-        btnDatabase.setEnabled(true);
-        btnAdd.setEnabled(true);
-        btnLeaveRequests.setEnabled(true);
-
-        btnTime.setVisible(false);
-    }
-
-    private void configureIT() {
-
-        btnManageLogin.setEnabled(true);
-        btnDatabase.setEnabled(true);
-
-        btnAdd.setVisible(false);
-        btnLeaveRequests.setVisible(false);
-        btnTime.setVisible(false);
-    }
-
-    private void configureHR() {
-
-        btnManageLogin.setVisible(false);
-        btnDatabase.setEnabled(true);
-        btnAdd.setEnabled(true);
-
-        btnLeaveRequests.setVisible(true);
-        btnTime.setVisible(false);
-    }
-
-    private void configureFinance() {
-
-        btnManageLogin.setVisible(false);
-        btnDatabase.setEnabled(true);
-
-        btnAdd.setVisible(false);
-        btnLeaveRequests.setVisible(false);
-        btnTime.setVisible(false);
-    }
-
-    private void hideAll() {
-
-        btnDatabase.setVisible(false);
-        btnAdd.setVisible(false);
-        btnLeaveRequests.setVisible(false);
-        btnTime.setVisible(false);
-        btnManageLogin.setVisible(false);
-    }
-
-    // session storage
-    public class Session {
-
-        public static String role;
-        public static String empNo;
     }
 }

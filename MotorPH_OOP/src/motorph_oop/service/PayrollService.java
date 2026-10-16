@@ -2,6 +2,8 @@ package motorph_oop.utils;
 
 import motorph_oop.util.Constants;
 import motorph_oop.model.Employee;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.Permission;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -90,10 +92,27 @@ public class PayrollService {
         }
     }
 
-    // Calculates payroll details for an employee.   
+    // Calculates payroll details (Admin, Finance, or the employee's own record).
     public static PayrollResult calculatePayroll(Employee employee,
                                                  String attendanceFile,
                                                  String selectedMonth) {
+
+        AccessControl.requireSelfOr(employee.getEmpNo(), Permission.CALCULATE_SALARY);
+        return compute(employee, attendanceFile, selectedMonth);
+    }
+
+    // Same computation, used when generating a payslip PDF (Admin, Finance, or own record).
+    public static PayrollResult generatePayslip(Employee employee,
+                                                String attendanceFile,
+                                                String selectedMonth) {
+
+        AccessControl.requireSelfOr(employee.getEmpNo(), Permission.GENERATE_PAYSLIP);
+        return compute(employee, attendanceFile, selectedMonth);
+    }
+
+    private static PayrollResult compute(Employee employee,
+                                         String attendanceFile,
+                                         String selectedMonth) {
 
         double hoursWorked =
                 calculateTotalHoursWorked(

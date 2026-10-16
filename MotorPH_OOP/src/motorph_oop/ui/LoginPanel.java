@@ -202,13 +202,13 @@ public class LoginPanel extends JFrame {
         Session.empNo = user.getEmpNo();
         Session.firstName = user.getFirstName();
         Session.lastName = user.getLastName();
+        Session.role = ((Role) user).getRoleName();
 
         if (user instanceof AdminAccess ||
             user instanceof ITAccess ||
             user instanceof HRAccess ||
             user instanceof FinanceAccess) {
 
-            Session.role = ((Role)user).getRoleName();
 
             new AdminDashboardPanel(
                     user.getEmpNo(),

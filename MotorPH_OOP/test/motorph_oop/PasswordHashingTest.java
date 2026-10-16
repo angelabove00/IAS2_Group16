@@ -17,9 +17,15 @@ public class PasswordHashingTest {
     private static int failed = 0;
     private static String testDataDir;
 
-    public static void main(String[] args) throws Exception {
+        public static void main(String[] args) throws Exception {
         // Set up temporary data directory
         setupTestDataDir();
+
+        // RBAC (Control 2): the Control 1 tests run as an Admin so that
+        // createUser / resetPassword / deleteUser are allowed
+        motorph_oop.util.Session.role = "Admin";
+        motorph_oop.util.Session.empNo = "10001";
+      
 
         try {
             // Run all tests

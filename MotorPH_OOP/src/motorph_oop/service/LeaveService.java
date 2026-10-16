@@ -3,6 +3,11 @@ package motorph_oop.service;
 
 import motorph_oop.dao.LeaveDAO;
 import motorph_oop.model.LeaveRequest;
+import motorph_oop.security.AccessControl;
+import motorph_oop.security.AccessDeniedException;
+import motorph_oop.security.AuditLog;
+import motorph_oop.security.Permission;
+import motorph_oop.util.Session;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -13,11 +18,29 @@ public class LeaveService {
 
     private final LeaveDAO leaveDAO = new LeaveDAO();
 
+    // true when the name belongs to the logged-in user
+    private boolean isSelf(String employeeName) {
+
+        if (Session.firstName == null || Session.lastName == null || employeeName == null) {
+            return false;
+        }
+
+        String self = Session.firstName + " " + Session.lastName;
+        return self.equalsIgnoreCase(employeeName.trim());
+    }
+
+    // all leave requests (Admin, HR)
     public List<LeaveRequest> getAllLeaves() {
+        AccessControl.require(Permission.APPROVE_LEAVE);
         return leaveDAO.loadAllLeaves();
     }
 
+    // your own leaves, or anyone's if you can approve leave
     public List<LeaveRequest> getLeavesByEmployee(String employeeName) {
+
+        if (!isSelf(employeeName)) {
+            AccessControl.require(Permission.APPROVE_LEAVE);
+        }
 
         List<LeaveRequest> all = leaveDAO.loadAllLeaves();
         List<LeaveRequest> result = new ArrayList<>();
@@ -32,12 +55,18 @@ public class LeaveService {
         return result;
     }
 
+    // you can only submit leave for yourself
     public LeaveRequest submitLeave(
             String employeeName,
             String leaveType,
             LocalDate startDate,
             LocalDate endDate,
             String reason) {
+
+        if (!isSelf(employeeName)) {
+            AuditLog.denied("SUBMIT_LEAVE_FOR_OTHERS");
+            throw new AccessDeniedException("Access denied: you can only submit leave for yourself.");
+        }
 
         validateLeaveDates(startDate, endDate);
 
@@ -64,11 +93,15 @@ public class LeaveService {
         return ChronoUnit.DAYS.between(start, end) + 1;
     }
 
+    // approve leave (Admin, HR)
     public void approveLeave(LeaveRequest request) {
+        AccessControl.require(Permission.APPROVE_LEAVE);
         changeLeaveStatus(request, "Approved");
     }
 
+    // reject leave (Admin, HR)
     public void rejectLeave(LeaveRequest request) {
+        AccessControl.require(Permission.APPROVE_LEAVE);
         changeLeaveStatus(request, "Rejected");
     }
 
