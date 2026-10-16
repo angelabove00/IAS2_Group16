@@ -1,0 +1,10 @@
+MotorPH_EmployeeLogin.csv - header and first 5 data rows (passwords masked for evidence)
+
+EmployeeNo,Username,Last Name,First Name,Password,AccessLevel
+10001,MGarcia,Garcia,Manuel III,MM***,Admin
+10002,Alim,Lim,Antonio,12***,Admin
+10003,Baquino,Aquino,Bianca Sofia,12***,Admin
+10004,Ireyes,Reyes,Isabella,12***,Admin
+10005,Ehernandez,Hernandez,Eduard,MM***,IT
+
+Note: 33/33 rows stored as plaintext; 27 use the default 1234.

@@ -1,13 +1,12 @@
 
 package motorph_oop.ui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
-import motorph_oop.service.LoginService;
+import javax.swing.*;
 import motorph_oop.dao.EmployeeDAO;
 import motorph_oop.model.Employee;
+import motorph_oop.service.LoginService;
 
 // panel for managing login accounts
 public class LoginManagementPanel extends JFrame {
@@ -101,7 +100,7 @@ public class LoginManagementPanel extends JFrame {
             JOptionPane.showMessageDialog(this,
                     "User created.\nUsername: " +
                     username +
-                    "\nDefault Password: 1234");
+                    "\nDefault Password: " + LoginService.TEMP_PASSWORD);
         }
     }
 
@@ -126,10 +125,10 @@ public class LoginManagementPanel extends JFrame {
 
         if (selected == null) return;
 
-        boolean success = loginService.resetPassword(selected, "1234");
+        boolean success = loginService.resetPassword(selected, LoginService.TEMP_PASSWORD);
 
         JOptionPane.showMessageDialog(this,
-                success ? "Password reset to 1234" : "Reset failed");
+                success ? "Password reset to the temporary default password." : "Reset failed");
     }
 
     // delete login credentials
@@ -195,14 +194,14 @@ public class LoginManagementPanel extends JFrame {
 
         if (selected == null) return;
 
-        boolean success = loginService.resetPassword(selected, "1234");
+        boolean success = loginService.resetPassword(selected, LoginService.TEMP_PASSWORD);
 
         if (success) {
             loginService.removeResetRequest(selected);
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Password reset to 1234"
+                    "Password reset to the temporary default password."
             );
         }
     }

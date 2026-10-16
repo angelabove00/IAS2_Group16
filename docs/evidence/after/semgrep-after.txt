@@ -1,0 +1,39 @@
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 41 files tracked by git with 1 Code rule:
+  Scanning 37 files.
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 4 (4 blocking)
+ • Rules run: 1
+ • Targets scanned: 37
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 1 rule on 37 files: 4 findings.
+                   
+                   
+┌─────────────────┐
+│ 4 Code Findings │
+└─────────────────┘
+                                                         
+    MotorPH_OOP\src\motorph_oop\service\LoginService.java
+    ❯❱ docs.evidence.hardcoded-default-password-1234
+          ❰❰ Blocking ❱❱
+          Hardcoded default password "1234"
+                                           
+           13┆ public static final String TEMP_PASSWORD = "1234";
+            ⋮┆----------------------------------------
+           97┆ PasswordHasher.hash(TEMP_PASSWORD),
+            ⋮┆----------------------------------------
+          128┆ return PasswordHasher.verify(TEMP_PASSWORD, user[4]);
+            ⋮┆----------------------------------------
+          147┆ if (newPassword.equals(TEMP_PASSWORD)) {
+

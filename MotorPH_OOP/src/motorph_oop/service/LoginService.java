@@ -3,10 +3,14 @@ package motorph_oop.service;
 
 import motorph_oop.dao.LoginDAO;
 import motorph_oop.model.*;
+import motorph_oop.util.PasswordHasher;
 
 public class LoginService {
 
     private LoginDAO loginDAO = new LoginDAO();
+
+    // Residual risk R-003: shared temporary password, to be replaced by the Secure Password Reset control (Milestone 3).
+    public static final String TEMP_PASSWORD = "1234";
 
     // login authentication
     public Employee authenticate(String username, String password) {
@@ -15,7 +19,7 @@ public class LoginService {
         if (user == null) return null;
 
         String storedPassword = user[4];
-        if (!storedPassword.equals(password)) return null;
+        if (!PasswordHasher.verify(password, storedPassword)) return null;
 
         String empNo = user[0];
         String lastName = user[2];
@@ -77,7 +81,8 @@ public class LoginService {
 
     // reset password
     public boolean resetPassword(String username, String newPassword) {
-        return loginDAO.updatePassword(username, newPassword);
+        String hashed = PasswordHasher.hash(newPassword);
+        return loginDAO.updatePassword(username, hashed);
     }
 
     // create user
@@ -89,7 +94,7 @@ public class LoginService {
                 username,
                 lastName,
                 firstName,
-                "1234",
+                PasswordHasher.hash(TEMP_PASSWORD),
                 role
         );
     }
@@ -120,7 +125,32 @@ public class LoginService {
         String[] user = loginDAO.findUserByUsername(username);
         if (user == null) return false;
 
-        return "1234".equals(user[4]);
+        return PasswordHasher.verify(TEMP_PASSWORD, user[4]);
+    }
+
+    // change own password (for forced first-login flow)
+    public boolean changeOwnPassword(String username, String currentPassword, String newPassword) {
+        String[] user = loginDAO.findUserByUsername(username);
+        if (user == null) return false;
+
+        // Verify current password
+        if (!PasswordHasher.verify(currentPassword, user[4])) {
+            return false;
+        }
+
+        // Validate new password
+        if (!validatePasswordRules(newPassword)) {
+            return false;
+        }
+
+        // Reject TEMP_PASSWORD as new password
+        if (newPassword.equals(TEMP_PASSWORD)) {
+            return false;
+        }
+
+        // Hash and save new password
+        String hashed = PasswordHasher.hash(newPassword);
+        return loginDAO.updatePassword(username, hashed);
     }
 
     // password reset request list
@@ -136,7 +166,7 @@ public class LoginService {
 
     // get all reset requests
     public java.util.List<String> getResetRequests() {
-        return resetRequests;
+        return new java.util.ArrayList<>(resetRequests);
     }
 
     // remove request after reset

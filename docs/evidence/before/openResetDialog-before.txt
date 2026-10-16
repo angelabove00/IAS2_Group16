@@ -1,0 +1,122 @@
+LoginPanel.openResetDialog() - verbatim from master (commit cf2a213)
+
+291:    private void openResetDialog() {
+292:
+293:        String username =
+294:                JOptionPane.showInputDialog(this, "Enter your username:");
+295:
+296:        if (username == null || username.trim().isEmpty()) {
+297:
+298:            JOptionPane.showMessageDialog(
+299:                    this,
+300:                    "Username cannot be empty."
+301:            );
+302:            return;
+303:        }
+304:
+305:        JPasswordField newPass = new JPasswordField(12);
+306:        JPasswordField confirmPass = new JPasswordField(12);
+307:
+308:        JLabel strengthLabel = new JLabel(" ");
+309:        strengthLabel.setFont(new Font("Arial", Font.BOLD, 12));
+310:
+311:        JCheckBox showBox = new JCheckBox("Show Password");
+312:
+313:        showBox.addActionListener(e -> {
+314:            char echo = showBox.isSelected() ? (char)0 : '•';
+315:            newPass.setEchoChar(echo);
+316:            confirmPass.setEchoChar(echo);
+317:        });
+318:
+319:        // password strength indicator
+320:        newPass.getDocument().addDocumentListener(
+321:                (SimpleDocumentListener) e -> {
+322:
+323:                    String strength =
+324:                            loginService.getPasswordStrength(
+325:                                    new String(newPass.getPassword())
+326:                            );
+327:
+328:                    strengthLabel.setText("Strength: " + strength);
+329:
+330:                    strengthLabel.setForeground(
+331:                            strength.equals("Strong")
+332:                                    ? new Color(0,153,0)
+333:                                    : strength.equals("Normal")
+334:                                    ? Color.ORANGE
+335:                                    : Color.RED
+336:                    );
+337:                }
+338:        );
+339:
+340:        JPanel panel = new JPanel(new GridBagLayout());
+341:        panel.setPreferredSize(new Dimension(340,170));
+342:        panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+343:
+344:        GridBagConstraints gbc = new GridBagConstraints();
+345:        gbc.insets = new Insets(5,5,5,5);
+346:        gbc.anchor = GridBagConstraints.WEST;
+347:
+348:        gbc.gridx = 0; gbc.gridy = 0;
+349:        panel.add(new JLabel("New Password:"), gbc);
+350:
+351:        gbc.gridx = 1;
+352:        panel.add(newPass, gbc);
+353:
+354:        gbc.gridx = 0; gbc.gridy = 1;
+355:        panel.add(new JLabel("Confirm Password:"), gbc);
+356:
+357:        gbc.gridx = 1;
+358:        panel.add(confirmPass, gbc);
+359:
+360:        gbc.gridx = 1; gbc.gridy = 2;
+361:        panel.add(showBox, gbc);
+362:
+363:        gbc.gridx = 0; gbc.gridy = 3;
+364:        gbc.gridwidth = 2;
+365:        panel.add(strengthLabel, gbc);
+366:
+367:        int option = JOptionPane.showConfirmDialog(
+368:                this,
+369:                panel,
+370:                "Reset Password",
+371:                JOptionPane.OK_CANCEL_OPTION,
+372:                JOptionPane.PLAIN_MESSAGE
+373:        );
+374:
+375:        if (option != JOptionPane.OK_OPTION) return;
+376:
+377:        String newPassword =
+378:                new String(newPass.getPassword()).trim();
+379:
+380:        String confirmPassword =
+381:                new String(confirmPass.getPassword()).trim();
+382:
+383:        if (!newPassword.equals(confirmPassword)) {
+384:
+385:            JOptionPane.showMessageDialog(
+386:                    this,
+387:                    "Passwords do not match."
+388:            );
+389:            return;
+390:        }
+391:
+392:        if (!loginService.validatePasswordRules(newPassword)) {
+393:
+394:            JOptionPane.showMessageDialog(
+395:                    this,
+396:                    "Password must be max 12 chars, include 1 uppercase, 1 number, and 1 special character."
+397:            );
+398:            return;
+399:        }
+400:
+401:        boolean success =
+402:                loginService.resetPassword(username, newPassword);
+403:
+404:        JOptionPane.showMessageDialog(
+405:                this,
+406:                success
+407:                        ? "Password successfully reset."
+408:                        : "Reset failed. User not found."
+409:        );
+410:    }
