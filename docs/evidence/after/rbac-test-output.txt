@@ -1,0 +1,19 @@
+Test data directory: C:\Users\asaor\AppData\Local\Temp\motorph-rbac-test-4150416245067052495
+[PASS] C2-T1 no login (no role) is denied everything
+[PASS] C2-T2 permission matrix matches the approved design (5 roles x 8 permissions)
+[PASS] C2-T3 unknown or malformed roles get no permissions
+[PASS] C2-T4 Employee cannot manage user accounts (LoginService)
+[PASS] C2-T5 IT: manages accounts, but cannot touch employees, leave or payroll
+[PASS] C2-T6 HR: employees and leave yes; accounts and payroll no
+[PASS] C2-T7 Finance: payroll and payslips yes; edit/delete, leave and accounts no
+[PASS] C2-T8 Employee can only reach their own record (employee, attendance, payroll, payslip)
+[PASS] C2-T9 Leave: employees see/submit only their own; approving needs APPROVE_LEAVE
+[PASS] C2-T10 Admin has full access
+[PASS] C2-T11 denied attempts are written to audit.log (and allowed ones are not)
+[PASS] C2-T12 logging out (Session.clear) removes access again
+[PASS] C2-T13 login and password flows still work with no session (Control 1 not blocked)
+
+=== TEST SUMMARY ===
+Passed: 13
+Failed: 0
+Total: 13
