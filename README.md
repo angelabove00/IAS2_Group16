@@ -161,6 +161,9 @@ java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/L
 - C2-T12: Logging out (Session.clear) removes access
 - C2-T13: Login and password flows still work without session (Control 1 not blocked)
 
+### Evidence
+See [docs/M2_Control2_Evidence.md](docs/M2_Control2_Evidence.md) for detailed evidence, test results, and before/after comparisons.
+
 ---
 
 ## 🚀 Get Started: Usage Instructions
