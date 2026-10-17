@@ -178,6 +178,178 @@
     }
 ```
 
+### AttendanceService.checkIn() Before
+
+```java
+21:    // Records employee check-in (own record only).
+22:    public void checkIn(String empId,
+23:                        String lastName,
+24:                        String firstName) {
+
+        // Validate if employee is already checked in
+        validateAlreadyCheckedIn(empId);
+
+        // Record time-in
+        attendanceDAO.recordTimeIn(empId, lastName, firstName);
+    }
+```
+
+### AttendanceService.checkIn() After
+
+```java
+21:    // Records employee check-in (own record only).
+22:    public void checkIn(String empId,
+23:                        String lastName,
+24:                        String firstName) {
+
+        AccessControl.requireSelf(empId);
+
+        // Validate if employee is already checked in
+        validateAlreadyCheckedIn(empId);
+
+        // Record time-in
+        attendanceDAO.recordTimeIn(empId, lastName, firstName);
+    }
+```
+
+### AttendanceService.getAttendance() Before
+
+```java
+43:    // Retrieves attendance records: your own, or anyone's if you can view all
+44:    public List<Object[]> getAttendance(String empId) {
+
+        return attendanceDAO.getAttendanceByEmployee(empId);
+    }
+```
+
+### AttendanceService.getAttendance() After
+
+```java
+43:    // Retrieves attendance records: your own, or anyone's if you can view all
+44:    public List<Object[]> getAttendance(String empId) {
+
+        AccessControl.requireSelfOr(empId, Permission.VIEW_ALL_EMPLOYEES);
+
+        return attendanceDAO.getAttendanceByEmployee(empId);
+    }
+```
+
+### LeaveService.getAllLeaves() Before
+
+```java
+32:    // all leave requests (Admin, HR)
+33:    public List<LeaveRequest> getAllLeaves() {
+        return leaveDAO.loadAllLeaves();
+    }
+```
+
+### LeaveService.getAllLeaves() After
+
+```java
+32:    // all leave requests (Admin, HR)
+33:    public List<LeaveRequest> getAllLeaves() {
+        AccessControl.require(Permission.APPROVE_LEAVE);
+        return leaveDAO.loadAllLeaves();
+    }
+```
+
+### LeaveService.approveLeave() Before
+
+```java
+96:    // approve leave (Admin, HR)
+97:    public void approveLeave(LeaveRequest request) {
+        changeLeaveStatus(request, "Approved");
+    }
+```
+
+### LeaveService.approveLeave() After
+
+```java
+96:    // approve leave (Admin, HR)
+97:    public void approveLeave(LeaveRequest request) {
+        AccessControl.require(Permission.APPROVE_LEAVE);
+        changeLeaveStatus(request, "Approved");
+    }
+```
+
+### LoginService.createUser() Before
+
+```java
+91:    // create user (Admin, IT)
+92:    public boolean createUser(String empNo, String username, String lastName,
+93:                              String firstName, String role) {
+
+        return loginDAO.createUser(
+                empNo,
+                username,
+                lastName,
+                firstName,
+                PasswordHasher.hash(TEMP_PASSWORD),
+                role
+        );
+    }
+```
+
+### LoginService.createUser() After
+
+```java
+91:    // create user (Admin, IT)
+92:    public boolean createUser(String empNo, String username, String lastName,
+93:                              String firstName, String role) {
+
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
+
+        return loginDAO.createUser(
+                empNo,
+                username,
+                lastName,
+                firstName,
+                PasswordHasher.hash(TEMP_PASSWORD),
+                role
+        );
+    }
+```
+
+### LoginService.getAllUsers() Before
+
+```java
+107:    // get all users (Admin, IT)
+108:    public java.util.List<String[]> getAllUsers() {
+        return loginDAO.getAllUsers();
+    }
+```
+
+### LoginService.getAllUsers() After
+
+```java
+107:    // get all users (Admin, IT)
+108:    public java.util.List<String[]> getAllUsers() {
+        AccessControl.require(Permission.MANAGE_USER_ACCOUNTS);
+        return loginDAO.getAllUsers();
+    }
+```
+
+### AdminDashboardPanel Logout Before
+
+```java
+257:        btnLogout.addActionListener(e -> {
+
+            new LoginPanel();
+            dispose();
+        });
+```
+
+### AdminDashboardPanel Logout After
+
+```java
+257:        btnLogout.addActionListener(e -> {
+
+            motorph_oop.util.Session.clear();   // clear the session on logout
+            new LoginPanel();
+            dispose();
+        });
+```
+
 ### AdminDashboardPanel.configurePermissions() Before
 
 ```java
