@@ -97,6 +97,10 @@ java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/L
 ### Evidence
 See [docs/M2_Control1_Evidence.md](docs/M2_Control1_Evidence.md) for detailed evidence, test results, and before/after comparisons.
 
+For the migration runbook, rollback and recovery procedure, malformed-input
+handling, and documented limitations, see
+[docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
+
 ---
 
 ## Milestone 2 – Control 2: Role-Based Access Control (RBAC)
@@ -163,6 +167,11 @@ java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/L
 
 ### Evidence
 See [docs/M2_Control2_Evidence.md](docs/M2_Control2_Evidence.md) for detailed evidence, test results, and before/after comparisons.
+
+For the complete permission enforcement explanation, audit-log examples,
+unauthorized-access evidence, detailed test procedures, static-analysis
+interpretation, and remaining untested scenarios, see
+[docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
 
 ---
 

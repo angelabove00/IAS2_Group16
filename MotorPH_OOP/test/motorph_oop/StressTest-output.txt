@@ -1,15 +1,42 @@
 Data directory: temporary copy (path redacted)
 === STRESS TEST EVIDENCE (credential values redacted) ===
-C1-1 Baseline: attempts=10, successful=10, average_ms=213.200, correct_accepted=true
-C1-2 Online brute force (single): attempts=500, successful_guesses=0, total_ms=105123, attempts_per_second=4.76, correct_accepted_after_failures=true, audit_lines=0
-C1-3 Online brute force (10 threads): attempts=500, successful_guesses=0, exceptions=0, total_ms=15032, attempts_per_second=33.26
-C1-4 Username timing: existing_average_ms=205.620, nonexistent_average_ms=0.060, ratio=3427.000
-C1-5 Offline cracking: accounts=33, bcrypt_guesses=87, bcrypt_ms=17893, bcrypt_guesses_per_second=4.86, cracked_accounts=27, cracked_dictionary_indexes=[0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], plaintext_guesses=3300000, plaintext_ms=18, plaintext_guesses_per_second=183333333.33, plaintext_matches=0
+C1-1 Baseline: attempts=10, successful=10, average_ms=218.400, correct_accepted=true
+C1-2 Online brute force (single): attempts=500, successful_guesses=0, total_ms=106450, attempts_per_second=4.70, correct_accepted_after_failures=true, audit_lines=0
+C1-3 Online brute force (10 threads): attempts=500, successful_guesses=0, exceptions=0, total_ms=14321, attempts_per_second=34.91
+C1-4 Username timing: existing_average_ms=206.100, nonexistent_average_ms=0.060, ratio=3435.000
+C1-5 Offline cracking: accounts=33, bcrypt_guesses=87, bcrypt_ms=17909, bcrypt_guesses_per_second=4.86, cracked_accounts=27, cracked_dictionary_indexes=[0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], plaintext_guesses=3300000, plaintext_ms=22, plaintext_guesses_per_second=150000000.00, plaintext_matches=0
 C1-6 null-username: uncaught exception
 C1-6 null-username: java.lang.NullPointerException
   at motorph_oop.dao.LoginDAO.findUserByUsername(LoginDAO.java:57)
   at motorph_oop.service.LoginService.authenticate(LoginService.java:20)
-  at motorph_oop.StressTest.malformedInput(StressTest.java:245)
-  at motorph_oop.StressTest.main(StressTest.java:57)
+  at motorph_oop.StressTest.malformedInput(StressTest.java:261)
+  at motorph_oop.StressTest.main(StressTest.java:67)
 C1-6 Malformed/oversized input: cases=15, accepted=0, rejected=14, exceptions=1
-C1-7 Concurrent first-login changes: accounts=8, returned_true=7, later_logins_working=2, lost_updates=5, exceptions=0, row_count_before=33, row_count_after=33, valid_bcrypt_rows=33/33
+C1-7 Concurrent first-login changes: accounts=8, returned_true=8, later_logins_working=2, lost_updates=6, exceptions=0, row_count_before=33, row_count_after=33, valid_bcrypt_rows=33/33
+C2-1 Baseline: HR_view_all=true, Finance_calculate_payroll=true, IT_list_users=true, Employee_own_attendance=true
+C2-2 EmployeeService.getEmployees: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.980
+C2-2 EmployeeService.getEmployee(10001): allowed=0, denied=50, other_exceptions=0, average_check_ms=0.280
+C2-2 EmployeeService.deleteEmployee(10001): allowed=0, denied=50, other_exceptions=0, average_check_ms=0.340
+C2-2 EmployeeService.updateEmployee: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.260
+C2-2 PayrollService.calculatePayroll: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.280
+C2-2 PayrollService.generatePayslip: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.280
+C2-2 LeaveService.getAllLeaves: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.240
+C2-2 LoginService.getAllUsers: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.260
+C2-2 LoginService.resetPassword: allowed=0, denied=50, other_exceptions=0, average_check_ms=0.260
+C2-2 AttendanceService.getAttendance(10001): allowed=0, denied=50, other_exceptions=0, average_check_ms=0.220
+C2-2 Files: employee_csv_changed=false, login_csv_changed=false, audit_denied_lines=500
+C2-2 audit_samples=[2026-10-20T19:03:58.563994700 | DENIED | empNo=10020 | role=Employee | permission=VIEW_ALL_EMPLOYEES, 2026-10-20T19:03:58.569012 | DENIED | empNo=10020 | role=Employee | permission=VIEW_ALL_EMPLOYEES, 2026-10-20T19:03:58.570011700 | DENIED | empNo=10020 | role=Employee | permission=VIEW_ALL_EMPLOYEES]
+C2-3 Concurrent denial flood: threads=20, calls=5000, denied=5000, allowed=0, errors=0, total_ms=900, checks_per_second=5555.56, audit_lines=5000, well_formed_exact=5000, malformed_or_interleaved=0, final_file_bytes=508587
+C2-4 Horizontal access: requested=34, allowed=1, denied=33, own_record_allowed=true
+C2-5 role=admin allowed=true
+C2-5 role=Admin allowed=true
+C2-5 role=ADMIN allowed=true
+C2-5 role= Admin allowed=false
+C2-5 role=ADMIN  allowed=false
+C2-5 role=Administrator allowed=false
+C2-5 role=root allowed=false
+C2-5 role= allowed=false
+C2-5 role=HR;Admin allowed=false
+C2-5 role=Admin\n allowed=false
+C2-5 Employee empNo=10001 attendance(10001) allowed=true
+C2-6 Data-file tampering: returned_access_class=AdminAccess
