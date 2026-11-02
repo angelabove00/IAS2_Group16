@@ -94,12 +94,96 @@ javac -encoding UTF-8 -d build/classes -cp "lib/jbcrypt-0.4.jar;lib/JFolderChoos
 java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" motorph_oop.PasswordHashingTest
 ```
 
+### Migration Process and Error Handling
+
+The password migration tool performs these steps:
+1. Checks that the login CSV exists
+2. Creates `backup\MotorPH_EmployeeLogin.plaintext.bak.csv`
+3. Reads the CSV
+4. Keeps rows that already contain a bcrypt hash
+5. Hashes old password values with bcrypt cost 12
+6. Reports migrated, skipped, and malformed rows
+7. Writes the rows back to the login CSV
+
+**Migration Verification**: All 33 old passwords verified successfully against their new bcrypt hashes (see [docs/evidence/after/migration-check.txt](docs/evidence/after/migration-check.txt)).
+
+**Error Handling**:
+| Case | Current result | Required response |
+|---|---|---|
+| Login CSV is missing | Tool prints error and exits | Check path and restore approved backup |
+| Login CSV is empty | Tool creates backup, prints error, exits | Restore last good file |
+| Row has fewer than six fields | Tool prints full row and skips it | Stop migration; repair row; run checks again |
+| Value is already a bcrypt hash | Tool skips it | Check it belongs to correct account |
+| Read, hash, or write error | Error reaches console | Keep backup; restore last good file; check before retry |
+| Damaged hash | `verify()` returns `false` | Reset account through approved account flow |
+
+**Rollback and Recovery**:
+If migration fails:
+1. Stop the application
+2. Stop all writes to the login CSV
+3. Keep the failed file and error output for review
+4. Do not overwrite the backup
+5. Restore the backup:
+   ```bash
+   copy /Y backup\MotorPH_EmployeeLogin.plaintext.bak.csv src\motorph_oop\resources\MotorPH_EmployeeLogin.csv
+   ```
+6. Do not run bcrypt-only code against restored plain passwords
+7. Check header, row count, and hash format
+8. Run PasswordHashingTest
+9. Change any password exposed in the backup
+
+### Test Procedures and Expected Results
+
+**Password Hashing Tests**:
+| Test | Procedure | Expected Result |
+|---|---|---|
+| Correct password | Hash a known test password and authenticate with it | Authentication succeeds |
+| Wrong password | Authenticate with a different password | Authentication returns no user |
+| Stored data | Inspect all 33 login rows with `isBcryptHash` | 33/33 are bcrypt hashes |
+| Salt uniqueness | Hash the same input twice | Hash strings differ and both verify |
+| Hash-as-password | Submit the stored hash as the password | Rejected |
+| Cost | Inspect the bcrypt cost marker | Cost is 12 |
+
+**Malformed Inputs and Damaged Hashes**:
+- Call `PasswordHasher.verify()` with null plaintext, null hash, empty strings, plaintext, malformed bcrypt text, and damaged bcrypt string
+- Call `PasswordHasher.hash()` with null and empty input
+- **Expected results**: `verify()` returns `false` without accepting the input; `hash()` rejects null/empty input with `IllegalArgumentException`; no plaintext is written by `LoginDAO`
+- **Known gap**: Direct `LoginService.authenticate(null, ...)` causes an uncaught `NullPointerException` in `LoginDAO.findUserByUsername`
+
+**Test Result**: 11/11 tests passed
+
+### Static Analysis Findings
+
+**Semgrep**:
+- 60 Java rules: **0 findings**
+- Hardcoded "1234" rule: **4 findings** (all at the intentional `LoginService.TEMP_PASSWORD` constant or its uses)
+- This is a documented residual risk, not a clean security result
+
+**SpotBugs**:
+- 85 warnings after Control 1, including:
+  - Default-encoding warnings in non-login CSV/payroll code
+  - Unchecked directory creation in the migration tool
+- These are not silently treated as resolved
+
+### Remaining Limitations and Untested Scenarios
+
+The following items are intentionally not described as completed controls:
+
+- The shared temporary password `1234` remains until a secure reset control is implemented; credential rotation is required for real deployment
+- The null-username authentication path throws instead of returning a normal authentication failure
+- Username timing attack vulnerability (existing average: 206.100ms vs nonexistent: 0.060ms, ratio: 3,435:1)
+- The migration tool has no atomic write, automatic rollback, or concurrency lock
+- Static `Session` fields are not safe for concurrent users in one JVM
+- CSV files and the audit log are not encrypted; filesystem access bypasses application RBAC
+- The audit log is local and tamperable without central collection
+- A malformed migration row is currently printed in full to stderr; a malformed row could expose a legacy password to console history
+- The tests do not provide: production multi-process migration test, crash/power-loss recovery test, filesystem-permission test, backup confidentiality test, log rotation/retention test, or full UI end-to-end authorization test
+- The tests do not establish resistance to denial-of-service, password spraying, or network interception (desktop CSV application)
+
 ### Evidence
 See [docs/M2_Control1_Evidence.md](docs/M2_Control1_Evidence.md) for detailed evidence, test results, and before/after comparisons.
 
-For the migration runbook, rollback and recovery procedure, malformed-input
-handling, and documented limitations, see
-[docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
+For complete migration details, stress test results, and additional documented limitations, see [docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
 
 ---
 
@@ -150,6 +234,39 @@ javac -encoding UTF-8 -d build/classes -cp "lib/jbcrypt-0.4.jar;lib/JFolderChoos
 java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" motorph_oop.RBACTest
 ```
 
+### RBAC Enforcement Details
+
+Authorization is enforced at the **service boundary**, not only by hiding UI controls. The `AccessControl` class is the single permission matrix. Each protected service operation calls `require`, `requireSelfOr`, or `requireSelf`; a failed check writes a denial event and throws `AccessDeniedException`. The UI uses `AccessControl.can()` only to show or enable controls and is not the security boundary.
+
+**Unauthorized Access Test Evidence**:
+- **Horizontal access test**: Requested 34 employee records, allowed only the caller's own record (allowed=1, denied=33)
+- **Denial flood test**: 5,000 calls from 20 threads resulted in denied=5000, allowed=0, errors=0; all 5,000 audit lines were well-formed and not interleaved
+- **Stress test**: 50 repeated calls denied for each restricted operation, with no CSV changes
+
+**Expected result for every unauthorized read or modification**:
+1. No restricted record is returned or changed
+2. `AccessDeniedException` is raised
+3. One well-formed `DENIED` audit entry is appended
+
+### Audit Logging and Sensitive Data Protection
+
+Denied events are written as UTF-8 lines to `audit.log` in the application data directory.
+
+**Sample audit log entry**:
+```
+2026-10-20T19:03:58.563994700 | DENIED | empNo=10020 | role=Employee | permission=VIEW_ALL_EMPLOYEES
+```
+
+**Sensitive Data Protection**:
+The log records timestamp, employee number, role, and permission only. It does **not** record:
+- Passwords
+- Password hashes
+- Request bodies
+- Payroll values
+- Plaintext employee details
+
+**Note**: This is protection against accidental credential disclosure, not a complete log-security solution. Anyone with filesystem access can read, delete, or modify the current log. Production deployment should use restrictive file permissions, append-only or centralized log storage, controlled retention, and monitoring for tampering.
+
 ### Test Coverage
 - C2-T1: No login (no role) is denied everything
 - C2-T2: Permission matrix matches approved design (5 roles × 8 permissions)
@@ -165,13 +282,12 @@ java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/L
 - C2-T12: Logging out (Session.clear) removes access
 - C2-T13: Login and password flows still work without session (Control 1 not blocked)
 
+**Test Result**: 13/13 tests passed
+
 ### Evidence
 See [docs/M2_Control2_Evidence.md](docs/M2_Control2_Evidence.md) for detailed evidence, test results, and before/after comparisons.
 
-For the complete permission enforcement explanation, audit-log examples,
-unauthorized-access evidence, detailed test procedures, static-analysis
-interpretation, and remaining untested scenarios, see
-[docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
+For complete RBAC enforcement details, audit-log examples, unauthorized-access evidence, detailed test procedures, static-analysis interpretation, and remaining untested scenarios, see [docs/Security_Controls_Runbook.md](docs/Security_Controls_Runbook.md).
 
 ---
 
