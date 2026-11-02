@@ -24,7 +24,7 @@ implementation trace is:
 | Control | Current implementation | Demonstration evidence |
 |---|---|---|
 | Bcrypt hashing and verification | [`PasswordHasher.java`](../MotorPH_OOP/src/motorph_oop/util/PasswordHasher.java), [`LoginService.java`](../MotorPH_OOP/src/motorph_oop/service/LoginService.java), [`LoginDAO.java`](../MotorPH_OOP/src/motorph_oop/dao/LoginDAO.java) | [`PasswordHashingTest.java`](../MotorPH_OOP/test/motorph_oop/PasswordHashingTest.java), [`test-output.txt`](./evidence/after/test-output.txt) |
-| Password migration and backup | [`PasswordMigrationTool.java`](../MotorPH_OOP/src/motorph_oop/util/PasswordMigrationTool.java) | Control 1 migration check and rollback procedure below |
+| Password migration and backup | [`PasswordMigrationTool.java`](../MotorPH_OOP/src/motorph_oop/util/PasswordMigrationTool.java), [`MigrationCheckTool.java`](../MotorPH_OOP/src/motorph_oop/util/MigrationCheckTool.java) | [`migration-check.txt`](./evidence/after/migration-check.txt) and migration check/rollback procedure below |
 | Central RBAC matrix | [`AccessControl.java`](../MotorPH_OOP/src/motorph_oop/security/AccessControl.java), [`Permission.java`](../MotorPH_OOP/src/motorph_oop/security/Permission.java) | [`RBACTest.java`](../MotorPH_OOP/test/motorph_oop/RBACTest.java), [`rbac-test-output.txt`](./evidence/after/rbac-test-output.txt) |
 | Service-layer enforcement | [`EmployeeService.java`](../MotorPH_OOP/src/motorph_oop/service/EmployeeService.java), [`LoginService.java`](../MotorPH_OOP/src/motorph_oop/service/LoginService.java), [`LeaveService.java`](../MotorPH_OOP/src/motorph_oop/service/LeaveService.java), [`AttendanceService.java`](../MotorPH_OOP/src/motorph_oop/service/AttendanceService.java), and [`PayrollService.java`](../MotorPH_OOP/src/motorph_oop/service/PayrollService.java) | RBAC test output and [`StressTest-output.txt`](../MotorPH_OOP/test/motorph_oop/StressTest-output.txt) |
 | Denial audit logging | [`AuditLog.java`](../MotorPH_OOP/src/motorph_oop/security/AuditLog.java) | C2-T11 and denial-flood evidence below |
@@ -53,101 +53,164 @@ The test results and limitations are reported as observed. Recommended
 hardening actions are intentionally labelled as recommendations and are not
 presented as completed implementation work.
 
-## 1. Password migration
+## 1. Password control and stress evidence
 
-### What is migrated
+### Control goal
 
-`PasswordMigrationTool` reads
-`MotorPH_OOP/src/motorph_oop/resources/MotorPH_EmployeeLogin.csv`, leaves the
-header unchanged, and replaces only values in the password column that are not
-recognised bcrypt hashes. Hashing uses jBCrypt 0.4 with cost factor 12. Rows
-already matching the bcrypt format are skipped, so a second run is intended to
-be idempotent.
+Control 1 replaces plain password storage and `String.equals()` checks with
+salted bcrypt hashes. It uses jBCrypt 0.4 at cost 12.
 
-The application verifies passwords with `PasswordHasher.verify()`; it never
-compares a supplied password directly with the stored value. `LoginDAO` also
-rejects an attempt to write a non-bcrypt password.
+The control covers:
 
-**Status: implemented and demonstrated.** The tool creates a backup, skips
-recognised bcrypt values, hashes legacy values, and reports migrated/skipped
-rows. It does not provide an atomic transaction or automatic rollback.
+- [`PasswordHasher.java`](../MotorPH_OOP/src/motorph_oop/util/PasswordHasher.java)
+- [`LoginService.java`](../MotorPH_OOP/src/motorph_oop/service/LoginService.java)
+- [`LoginDAO.java`](../MotorPH_OOP/src/motorph_oop/dao/LoginDAO.java)
+- `MotorPH_EmployeeLogin.csv`
 
-### Normal migration procedure
+`LoginDAO` refuses to save a value that is not a valid bcrypt hash.
+`LoginService` uses `PasswordHasher.verify()` for login checks. First-login
+password changes also save a bcrypt hash.
 
-1. Stop the application and make sure no other process is editing the login CSV.
-2. Make a separate copy of the login CSV and restrict access to the migration
-   operator. The tool itself creates
-   `MotorPH_OOP/backup/MotorPH_EmployeeLogin.plaintext.bak.csv` before reading
-   the source file; this backup contains the legacy plaintext values and must be
-   treated as sensitive.
-3. Run the migration tool from `MotorPH_OOP` using the project’s normal
-   NetBeans/Ant run configuration.
-4. Confirm the output reports the expected number of migrated rows and any
-   skipped bcrypt rows. A malformed row is reported and skipped, not silently
-   converted.
-5. Confirm every data row has a bcrypt value and that the header and row count
-   are unchanged. The recorded migration check is
-   `rows=33 old-password-verifies=33 mismatches=0 header-same=true`.
-6. Run `PasswordHashingTest` and perform a controlled login using a test
-   account. Do not print or paste real passwords or the plaintext backup into
-   tickets, logs, or source control.
-7. Retain the backup only for the approved recovery period, then securely
-   delete it according to the project’s data-retention policy.
+**Status: implemented and tested.**
 
-### Error handling during migration
+### Migration process
 
-| Condition | Current behavior | Operator action |
+[`PasswordMigrationTool.java`](../MotorPH_OOP/src/motorph_oop/util/PasswordMigrationTool.java)
+performs these steps:
+
+1. Checks that the login CSV exists.
+2. Creates `backup\MotorPH_EmployeeLogin.plaintext.bak.csv`.
+3. Reads the CSV.
+4. Keeps rows that already contain a bcrypt hash.
+5. Hashes old password values with bcrypt cost 12.
+6. Reports migrated, skipped, and malformed rows.
+7. Writes the rows back to the login CSV.
+
+The migration check recorded in the Control 1 evidence is available in
+[`migration-check.txt`](./evidence/after/migration-check.txt):
+
+```text
+rows=33 old-password-verifies=33 mismatches=0 header-same=true
+```
+
+This shows that all 33 old passwords matched their new hashes and that the
+header stayed the same. The check was performed by hashing each password from
+the pre-migration backup and verifying it against the corresponding hash in the
+migrated CSV.
+
+**Note:** The backup file `backup/MotorPH_EmployeeLogin.plaintext.bak.csv` is not
+committed to the repository because it contains plaintext passwords. The
+migration-check.txt file records the verification result from the original
+migration run. If you have a local backup (e.g., from running the migration tool
+yourself), you can run MigrationCheckTool to verify it:
+
+```text
+cd MotorPH_OOP
+javac -encoding UTF-8 -d build/classes -cp "lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" src/motorph_oop/util/MigrationCheckTool.java
+java -cp "build/classes;lib/jbcrypt-0.4.jar;lib/JFolderChooser-0.9-src.jar;lib/LGoodDatePicker-11.2.1.jar;lib/itextpdf-5.5.13.3.jar" motorph_oop.util.MigrationCheckTool
+```
+
+The tool reads the backup file and the current login CSV, verifies each old
+password against its new hash, and outputs the verification result in the same
+format as the evidence file.
+
+The backup contains old passwords. Protect it as secret data. Do not commit it,
+send it by email, or paste it into a ticket.
+
+### Migration error handling
+
+| Case | Current result | Required response |
 |---|---|---|
-| Login CSV is missing | Prints an error and exits before creating a backup | Restore the file from the approved backup, then stop and investigate the path/configuration |
-| Login CSV is empty | Creates the backup, prints an error, and exits | Do not use the empty file; restore the backup and verify the source |
-| Row has fewer than six columns | Reports the row number and the full row content, then skips that row | Treat console output as sensitive because the full row may contain a password; stop the release, repair the source row from an authoritative copy, and rerun validation |
-| Password already has a valid bcrypt shape | Skips the row | Confirm that the hash belongs to the intended account and continue |
-| Hashing, reading, or writing fails | The exception/error is surfaced to the console; the write is not reported as successful | Preserve the error output, do not delete the backup, restore the last known-good CSV, and validate before retrying |
-| A hash is malformed or damaged | `verify()` returns `false`; it does not accept plaintext or throw for a malformed stored hash | Treat the account as unable to authenticate, reset it through an authorised account-management flow, and investigate the source file |
+| Login CSV is missing | The tool prints an error and exits | Check the path and restore the approved backup |
+| Login CSV is empty | The tool creates a backup, prints an error, and exits | Restore the last good file |
+| Row has fewer than six fields | The tool prints the full row and skips it | Stop the migration; repair the row; run the checks again |
+| Value is already a bcrypt hash | The tool skips it | Check that it belongs to the correct account |
+| Read, hash, or write error | The error reaches the console | Keep the backup; restore the last good file; check before retry |
+| Damaged hash | `verify()` returns `false` | Reset the account through an approved account flow |
 
-The migration writes the complete in-memory row list back to the original file.
-It is not an atomic temp-file-and-rename transaction, and it does not perform a
-post-write automatic rollback. Therefore the backup and the validation steps
-above are mandatory. The rollback steps in this runbook are operator recovery
-instructions, not an automatic feature of `PasswordMigrationTool`.
+The tool writes the full row list back to the original file. It does not use an
+atomic temporary file and does not roll back by itself.
 
-### Rollback and recovery if migration fails
+### Rollback and recovery
 
-1. Stop the application and prevent further writes to the login CSV.
-2. Preserve the console output, timestamps, and the failed CSV as evidence.
-   Do not overwrite the backup with a second migration attempt.
-3. Verify that the backup is the expected file and is readable only by the
-   operator. Never upload it to an issue or commit it.
-4. Restore the backup to the application resource path:
+If migration fails:
 
-   **PowerShell**
-   ```powershell
-   Copy-Item `
-     .\backup\MotorPH_EmployeeLogin.plaintext.bak.csv `
-     .\src\motorph_oop\resources\MotorPH_EmployeeLogin.csv `
-     -Force
-   ```
+1. Stop the application.
+2. Stop all writes to the login CSV.
+3. Keep the failed file and error output for review.
+4. Do not overwrite the backup.
+5. Restore the backup.
 
-   **cmd.exe**
-   ```text
-   copy /Y backup\MotorPH_EmployeeLogin.plaintext.bak.csv src\motorph_oop\resources\MotorPH_EmployeeLogin.csv
-   ```
+PowerShell:
 
-5. If the application has already been changed to require bcrypt, do not leave
-   the application running against the restored plaintext file. Either restore
-   the matching pre-migration application build or rerun the migration after
-   repairing the source.
-6. Recount rows, verify the header, and run the password tests. For a damaged
-   or partially migrated file, restore from the last known-good copy first
-   rather than trying to repair individual hashes manually.
-7. After recovery, rotate any credentials exposed in the plaintext backup and
-   record the incident without recording the credentials themselves.
+```powershell
+Copy-Item `
+  .\backup\MotorPH_EmployeeLogin.plaintext.bak.csv `
+  .\src\motorph_oop\resources\MotorPH_EmployeeLogin.csv `
+  -Force
+```
 
-**Status: implemented but not fully tested.** Concurrent migration is not
-supported. The stress evidence recorded eight
-simultaneous first-login changes with six lost updates, although all resulting
-rows remained syntactically valid bcrypt rows. Run migration and password
-updates in a single-writer maintenance window.
+Command Prompt:
+
+```text
+copy /Y backup\MotorPH_EmployeeLogin.plaintext.bak.csv src\motorph_oop\resources\MotorPH_EmployeeLogin.csv
+```
+
+6. Do not run bcrypt-only code against restored plain passwords.
+7. Check the header, row count, and hash format.
+8. Run `PasswordHashingTest`.
+9. Change any password exposed in the backup.
+
+Rollback is an operator procedure. It is not an automatic feature.
+
+### Stress test method
+
+[`StressTest.java`](../MotorPH_OOP/test/motorph_oop/StressTest.java) runs seven
+bounded cases against a temporary copy of the data files. It calls the real
+service and DAO classes. It does not change the source CSV files. It does not
+print passwords or hashes. It uses `System.nanoTime()` for timing, SHA-256 for
+file checks, and `PasswordHasher.verify()` for hash checks.
+
+Evidence: [`StressTest-output.txt`](../MotorPH_OOP/test/motorph_oop/StressTest-output.txt).
+
+### Stress test results
+
+| Case | Test | Result |
+|---|---|---|
+| C1-1 | Ten correct logins | 10/10 succeeded; average 218.40 ms |
+| C1-2 | 500 wrong guesses, one thread | 0 guesses succeeded; 4.70 attempts/second |
+| C1-3 | 500 wrong guesses, ten threads | 0 guesses succeeded; 0 exceptions |
+| C1-4 | Username timing | Existing: 206.10 ms; missing: 0.06 ms; ratio: 3,435:1 |
+| C1-5 | Offline attack on 33 bcrypt hashes | 87 bcrypt guesses; 27/33 accounts cracked |
+| C1-6 | 15 malformed or large inputs | 0 accepted; 14 rejected; 1 uncaught exception |
+| C1-7 | Eight concurrent first-login changes | 8 returned true; only 2 later logins worked; 6 updates were lost |
+
+The 27 cracked accounts used the temporary default password. This shows a
+weak-password problem, not a bcrypt failure. The same test against simulated
+plain storage ran at about 150 million guesses per second. The bcrypt test ran
+at 4.86 guesses per second.
+
+### Findings from the stress test
+
+1. The service has no backend lockout. The three-attempt lockout exists in the
+   login panel only.
+2. Failed logins do not create audit entries.
+3. A null username causes an uncaught `NullPointerException` in
+   `LoginDAO.findUserByUsername`.
+4. `changeOwnPassword` is not safe for concurrent calls. Eight calls returned
+   success, but six updates were lost.
+5. Twenty-seven accounts still use the temporary default password.
+
+These are open findings. They do not cancel the result that bcrypt hashing,
+hash verification, and the DAO write guard work as tested.
+
+### Next fixes
+
+1. Lock the password read-modify-write operation.
+2. Move login lockout into `LoginService`.
+3. Log failed logins.
+4. Reject a null username before the DAO call.
+5. Require users to replace the temporary password.
 
 ## 2. RBAC enforcement
 
@@ -332,6 +395,12 @@ The following items are intentionally not described as completed controls:
 
 1. Open `PasswordMigrationTool.java` and show the backup creation, bcrypt
    detection, malformed-row handling, and write-back logic.
+2. Open `MigrationCheckTool.java` and show that it reads the backup and current
+   CSV, verifies each old password against its hash, and outputs the check result.
+   Note that the backup is not in the repository because it contains plaintext
+   passwords.
+3. Show the `migration-check.txt` evidence file and explain that all 33 passwords
+   verified successfully when the migration was originally run.
 2. Show `PasswordHasher.java` and `LoginDAO.java`, then run
    `PasswordHashingTest`; expected result is 11/11 passed.
 3. Open `AccessControl.java` and `Permission.java`, then map each role to the
