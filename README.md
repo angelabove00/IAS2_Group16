@@ -84,7 +84,7 @@ Designed not just as a requirement — but as a developer growth milestone
 
 ---
 
-## �📈 Current Project Progress
+## � Current Project Progress
 
 **IAS1 (MO-IT103)**: ✅ Complete
 - OOP architecture implementation
