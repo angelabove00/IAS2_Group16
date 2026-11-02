@@ -63,7 +63,28 @@ Designed not just as a requirement — but as a developer growth milestone
 
 ---
 
-## 📈 Current Project Progress
+## � Quick Links to Documentation
+
+**Security Documentation:**
+- [Security Controls Runbook](docs/Security_Controls_Runbook.md) - Complete guide to password migration, RBAC enforcement, audit logging, test procedures, and limitations
+- [Stress Testing Evidence](docs/Stress_Testing_Evidence.md) - Detailed analysis of 13 stress test scenarios with findings and interpretations
+- [M2 Control 1 Evidence](docs/M2_Control1_Evidence.md) - Password hashing implementation evidence, test results, and before/after comparisons
+- [M2 Control 2 Evidence](docs/M2_Control2_Evidence.md) - RBAC implementation evidence, test results, and before/after comparisons
+
+**Test Evidence Files:**
+- [Password Hashing Test Output](docs/evidence/after/test-output.txt) - 11/11 tests passed
+- [RBAC Test Output](docs/evidence/after/rbac-test-output.txt) - 13/13 tests passed
+- [Stress Test Output](MotorPH_OOP/test/motorph_oop/StressTest-output.txt) - 13 stress test scenarios results
+- [Migration Check](docs/evidence/after/migration-check.txt) - Password migration verification (33/33 verified)
+
+**Static Analysis Evidence:**
+- [Semgrep Results (after)](docs/evidence/after/semgrep-after.txt) - 0 findings (60 Java rules)
+- [Semgrep Legacy Rule](docs/evidence/after/semgrep-pjava-after.txt) - 4 findings (hardcoded "1234" at TEMP_PASSWORD)
+- [SpotBugs Results (after)](docs/evidence/after/spotbugs-after.txt) - 85 warnings documented
+
+---
+
+## �📈 Current Project Progress
 
 **IAS1 (MO-IT103)**: ✅ Complete
 - OOP architecture implementation
